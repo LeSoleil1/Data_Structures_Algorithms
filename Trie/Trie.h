@@ -57,35 +57,40 @@ class Trie {
 		bool insert( std::string const & );
 		bool erase( std::string const & );
 		void clear();
+		string strToLower(std::string const &);
 
-	// Friends
+		// Friends
 
-	friend std::ostream &operator<<( std::ostream &, Trie const & );
+		friend std::ostream &operator<<( std::ostream &, Trie const & );
 };
 
 Trie::Trie():
-root_node( nullptr ),
-trie_size( 0 ) {
-	// empty constructor
-}
+	root_node( nullptr ),
+	trie_size( 0 ) {
+		// empty constructor
+	}
 
 Trie::~Trie() {
 }
 
 int Trie::size() const {
-	return 0;
+	return trie_size;
 }
 
 bool Trie::empty() const {
-	return false;
+	return (trie_size==0);
 }
 
 Trie_node *Trie::root() const {
-	return nullptr;
+	return root_node;
 }
 
 bool Trie::member( std::string const &str ) const {
-	return false;
+	if (empty()){
+		return false;
+	}
+	return root_node->member(str,0);
+	//return false;
 }
 
 bool Trie::insert( std::string const &str ) {
@@ -94,6 +99,15 @@ bool Trie::insert( std::string const &str ) {
 
 bool Trie::erase( std::string const &str ) {
 	return false;
+}
+std::string Trie::strToLower(std::string const &str){
+	std::string returnString;
+	for (int i=0;i<str.size();i++){
+		returnString[i]=std::toLower(str[i]);
+	}
+	return returnString;
+
+
 }
 
 void Trie::clear() {
