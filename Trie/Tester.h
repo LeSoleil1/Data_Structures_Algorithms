@@ -148,39 +148,44 @@ int Tester<Class_name>::run() {
 			std::cout << "Okay" << std::endl;
 			ece250::allocation_table.stop_recording();
 			break;
+
 		} else if ( command == "new" ) {
 			object = new Class_name();
 			std::cout << "Okay" << std::endl;
+
 		} else if ( command == "new:" ) {
 			object = new Class_name();
 			std::cout << "Okay" << std::endl;
+
 		} else if ( command == "delete" ) {
 			delete object;
 			object = 0;
 			std::cout << "Okay" << std::endl;
+
 		} else if ( command == "summary" ) {
 			ece250::allocation_table.summary();
+
 		} else if ( command == "details" ) {
 			ece250::allocation_table.details();
+
 		} else if ( command == "memory" ) {
 			int n;
-
 			std::cin >> n;
-
 			if ( n == ece250::allocation_table.memory_alloc() ) {
 				std::cout << "Okay" << std::endl;
 			} else {
 				std::cout << "Failure in memory allocation: expecting " << n << " bytes to be allocated, but " << ece250::allocation_table.memory_alloc() << " bytes were allocated" << std::endl;
 			}
+
 		} else if ( command == "memory_store" ) {
 			ece250::allocation_table.memory_store();
 			std::cout << "Okay" << std::endl;
+
 		} else if ( command == "memory_change" ) {
 			int n;
-
 			std::cin >> n;
-
 			ece250::allocation_table.memory_change( n );
+
 		} else {
 			process();
 		}
