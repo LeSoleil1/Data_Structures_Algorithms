@@ -41,8 +41,8 @@ class Trie {
 	private:
 		Trie_node *root_node;
 		int trie_size;
-		std::string strToLower(std::string const &);
-		bool strValidity(std::string const &);
+		std::string strToLower(std::string const &) const;
+		bool strValidity(std::string const &) const;
 
 
 
@@ -95,20 +95,22 @@ bool Trie::member( std::string const &str ) const {
 	if (empty()){
 		return false;
 	}
-	//std::string strToPass=strToLower(str);
+	if(!strValidity(str))
+		throw illegal_argument();
+
 	return root_node->member(strToLower(str),0);
-	//return false;
 }
 
 bool Trie::insert( std::string const &str ) {
 	if (empty()){
 		root_node=new Trie_node();
 	}
+	if(!strValidity(str))
+		throw illegal_argument();
 	if (member(str))
 		return false;
-	std::string strToPass=strToLower(str);
 	bool insertionResult=false;
-	if(root_node->insert(strToPass,0)==true){
+	if(root_node->insert(strToLower(str),0)==true){
 		trie_size++;
 		insertionResult=true;
 	}
@@ -120,9 +122,10 @@ bool Trie::erase( std::string const &str ) {
 		return false;
 	if(!member(str))
 		return false;
-	std::string strToPass;
-	strToPass=strToLower(str);
-	if(root_node->erase(strToPass,0,root_node)){
+	if(!strValidity(str))
+		throw illegal_argument();
+
+	if(root_node->erase(strToLower(str),0,root_node)){
 		trie_size--;
 		if(trie_size==0)
 			delete root_node;
@@ -131,7 +134,7 @@ bool Trie::erase( std::string const &str ) {
 
 	return false;
 }
-std::string Trie::strToLower(std::string const &str){
+std::string Trie::strToLower(std::string const &str) const{
 	std::string returnString;
 	for (int i=0;i<str.size();i++){
 		returnString[i]=std::tolower(str[i]);
@@ -140,7 +143,7 @@ std::string Trie::strToLower(std::string const &str){
 
 
 }
-bool Trie::strValidity(std::string const &str){
+bool Trie::strValidity(std::string const &str) const{
 	for (int i=0;i<str.size();i++){
 		if(!std::isalpha(str[i]))
 			return false;

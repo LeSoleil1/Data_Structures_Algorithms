@@ -41,6 +41,7 @@ class Trie_node {
 		Trie_node **children;
 		bool is_terminal;
 		static int const CHARACTERS = 26;
+		bool checkEmpty();
 
 
 	public:
@@ -62,10 +63,10 @@ class Trie_node {
 };
 
 Trie_node::Trie_node():
-children( nullptr ),
-is_terminal( false ) {
-	// empty constructor
-}
+	children( nullptr ),
+	is_terminal( false ) {
+		// empty constructor
+	}
 
 Trie_node *Trie_node::child( int n ) const {
 	if ( children == nullptr ) {
@@ -76,18 +77,65 @@ Trie_node *Trie_node::child( int n ) const {
 }
 
 bool Trie_node::member( std::string const &str, int depth ) const {
-	return false;
+	if(str.length()==str[depth]){
+		return is_terminal;
+	}
+	if(children==nullptr)
+		return false;
+	if(children[str[depth]-'a']==nullptr)
+		return false;
+	children[str[depth]-'a']->member(str,depth+1);
 }
 
 bool Trie_node::insert( std::string const &str, int depth ) {
-	return false;
+	if(children==nullptr)
+		children=new Trie_node*[CHARACTERS]();
+	if(children[str[depth]-'a']==nullptr)
+		children[depth]=new Trie_node();
+	if(str.length()==depth)
+		return(is_terminal=true);
 }
 
 bool Trie_node::erase( std::string const &str, int depth, Trie_node *&ptr_to_this ) {
+	bool ifEmpty=true;
+	if(str.length()==depth){
+		for(int i=0;i<CHARACTERS;i++){
+			if(children[i]!=nullptr){
+				ifEmpty=false;
+				break;
+			}
+		}
+		if(ifEmpty==true){
+			//			delete children;
+			delete this;
+			ptr_to_this=nullptr;
+		}else{
+			is_terminal=false;
+			return true;
+		}
+	}else{
+		children[str[depth]-'a']->erase(str,depth+1,children[str[depth]-'a']);
+	}
+
+
 	return false;
 }
 
+
 void Trie_node::clear() {
+	if(children!=nullptr){
+		for(int i=0;i<CHARACTERS;i++){
+			if(children[i]!=nullptr){
+				children[i]->clear();
+				children[i]=nullptr;
+			}
+		}
+	}else{
+
+		delete this;
+
+	}
+
 }
 
 
