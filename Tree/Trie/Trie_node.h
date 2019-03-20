@@ -84,14 +84,16 @@ bool Trie_node::member( std::string const &str, int depth ) const {
 		return false;
 	if(children[str[depth]-'a']==nullptr)
 		return false;
-	children[str[depth]-'a']->member(str,depth+1);
+	return children[str[depth]-'a']->member(str,depth+1);
 }
 
 bool Trie_node::insert( std::string const &str, int depth ) {
 	if(children==nullptr)
 		children=new Trie_node*[CHARACTERS]();
-	if(children[str[depth]-'a']==nullptr)
-		children[depth]=new Trie_node();
+	if(children[str[depth]-'a']==nullptr){
+		children[str[depth]-'a']=new Trie_node();
+		children[str[depth]-'a']->insert(str,depth+1);
+	}
 	if(str.length()==depth)
 		return(is_terminal=true);
 }
