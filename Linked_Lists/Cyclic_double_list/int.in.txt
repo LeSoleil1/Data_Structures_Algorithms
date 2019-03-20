@@ -1,0 +1,99 @@
+new
+empty 1
+size 0
+head0
+push_front 13
+empty 0
+size 1
+head
+	retrieve 13
+	next
+	retrieve 13
+exit
+push_front 14
+empty 0
+size 2
+head
+	retrieve 14
+	next
+	retrieve 13
+	next
+	retrieve 14
+exit
+push_front 15
+empty 0
+size 3
+head
+	retrieve 15
+	next
+	retrieve 14
+	next
+	retrieve 13
+	next
+	retrieve 15
+exit
+push_front 16
+empty 0
+size 4
+head
+	retrieve 16
+	next
+	retrieve 15
+	next
+	retrieve 14
+	next
+	retrieve 13
+	next
+	retrieve 16
+exit
+push_back 12
+empty 0
+size 5
+head
+	retrieve 16
+	next
+	retrieve 15
+	next
+	retrieve 14
+	next
+	retrieve 13
+	next
+	retrieve 12
+	next
+	retrieve 16
+exit
+pop_front 16
+empty 0
+size 4
+head
+	retrieve 15
+	next
+	retrieve 14
+	next
+	retrieve 13
+	next
+	retrieve 12
+	next
+	retrieve 15
+exit
+pop_back 12
+empty 0
+size 3
+head
+	retrieve 15
+	next
+	retrieve 14
+	next
+	retrieve 13
+	next
+	retrieve 15
+exit
+pop_front 15
+pop_back 13
+pop_front 14
+empty 1
+size 0
+head0
+delete
+summary
+exit
