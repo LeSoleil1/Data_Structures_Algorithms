@@ -45,6 +45,8 @@ class Trie_node_tester:public Tester< Trie_node > {
  *
  *   child n          child( n )          the nth child pointer can be followed
  *   child0 n         child( n )          the nth child pointer is 'nullptr'
+ *   alpha c          alpha ( c )         the child corresponding to character 'c' can be followed
+ *   alpha0 c         alpha ( c )         the child corresponding to character 'c' is 'nullptr' means it is not out there
  ****************************************************/
 
 void Trie_node_tester::process() {
@@ -70,6 +72,34 @@ void Trie_node_tester::process() {
 			std::cout << "Okay" << std::endl;
 		} else {
 			std::cout << ": Failure in child( " << index << " ): expecting a null (nullptr) child pointer" << std::endl;
+		}
+	} else if ( command == "alpha" ) {
+		int index;
+		char inputChar;
+
+		std::cin >> inputChar;
+		index=inputChar-'a';
+
+
+		Trie_node *actual_child = Trie_node_tester::object->child( index );
+
+		if ( actual_child != nullptr ) {
+			object = actual_child;
+			std::cout << "Okay" << std::endl;
+		} else {
+			std::cout << ": Failure in alphabet( " << inputChar << " ): expecting to follow a non-null child pointer" << std::endl;
+		}
+	} else if ( command == "alpha0" ) {
+		int index;
+		char inputChar;
+
+		std::cin >> inputChar;
+		index=inputChar-'a';
+
+		if ( object->child( index ) == nullptr ) {
+			std::cout << "Okay" << std::endl;
+		} else {
+			std::cout << ": Failure in character( " << inputChar << " ): expecting a null (nullptr) child pointer" << std::endl;
 		}
 	} else {
 		std::cout << command << ": Command not found." << std::endl;

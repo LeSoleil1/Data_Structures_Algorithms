@@ -1,0 +1,25 @@
+new
+insert 3.2
+insert 7.5
+head
+retrieve 3.2
+next
+retrieve 7.5
+next0
+exit
+front 3.2
+back 7.5
+count 3.2 1
+count 5.7 0
+count 7.5 1
+pop_front 3.2
+front 7.5
+back 7.5
+pop_front 7.5
+pop_front!
+size 0
+empty 1
+delete
+summary
+exit
+
