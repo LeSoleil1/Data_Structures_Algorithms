@@ -23,6 +23,8 @@ class Weighted_graph {
 		double **AdjMatrix;
 		int count;
 		bool *MST_set;
+//		bool *visited;
+		int visit(int,bool * ) const;
 
 		// your choice
 
@@ -52,11 +54,22 @@ Weighted_graph::Weighted_graph(int n){
 	total_vertex_number=n;
 	AdjMatrix=new double*[n];
 	for (int i=0;i<n;i++){
-		AdjMatrix[i]=new double[n]{INF};
+		AdjMatrix[i]=new double[n];
 	}
+
+	for (int i=0;i<n;i++)
+		for(int j=0;j<n;j++){
+			AdjMatrix[i][j]=INF;
+			//		std::cout<<AdjMatrix[i][j]<<"\t";
+		}
+
 	vertex_degree=new int[n]{0};
+	//for (int i=0;i<n;i++)
+	//	std::cout<<vertex_degree[i]<<"\t";
+
 	count=0;
 	MST_set=new bool[n]{0};
+	//visited=new bool[n]{0};
 
 
 
@@ -67,6 +80,9 @@ Weighted_graph::~Weighted_graph(){
 		delete [] AdjMatrix[i];
 	}
 	delete[] AdjMatrix;
+	delete[] vertex_degree;
+	delete[] MST_set;
+//	delete[] visited;
 	count=0;
 
 }
@@ -92,18 +108,37 @@ double Weighted_graph::adjacent(int m, int n) const{
 
 //Determine if the graph is connected.
 bool Weighted_graph::is_connected() const{
+	if(count<(total_vertex_number-1))
+		return false;
+
 	for(int i=0;i<total_vertex_number;i++){
 		if(vertex_degree[i]==0)
 			return false;
 	}
-	return true;
+ bool *visited=new bool[total_vertex_number]{0};
+
+	int starting_point=0;
+	int node_visited=visit(starting_point,visited);
+	//std::cout<<"node visited:    "<<node_visited<<std::endl;
+	if(node_visited==total_vertex_number)
+		return true;
+	return false;
 }
 
 //Return the size of the minimum spanning tree of those nodes which are connected to vertex m. Throw an illegal argument exception if the arguments do not correspond to existing vertices.
 double Weighted_graph::minimum_spanning_tree(int start_vertex) const {
-	
+
 
 	return 0.0;
+}
+
+int Weighted_graph::visit(int visit_node,bool *vist) const{
+	vist[visit_node]=1;
+	for (int i=0;i<total_vertex_number;i++){
+		if(AdjMatrix[visit_node][i]!=INF && vist[i]==0)
+			return 1+visit(i,vist);
+	}
+
 }
 
 
