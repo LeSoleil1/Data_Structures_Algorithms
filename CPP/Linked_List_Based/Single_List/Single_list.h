@@ -91,13 +91,44 @@ Single_list<Type>::Single_list( Single_list<Type> const &list ):
 list_head( nullptr ),
 list_tail( nullptr ),
 list_size( 0 ) {
-	// enter your implementation here
+	// The copy constructor creates a new instance of the linked list. (O(n))
+	if (list.list_size == 0){
+		return;
+	}
+	Single_node<Type> *current_Node = list.list_head;
+	Single_node<Type> *new_Node = new Single_node<Type>(current_Node->element,nullptr);
+	list_size++;
+	list_head = new_Node;
+	Single_node<Type> *previous_Node;
+	while (current_Node->next() != nullptr){
+		new_Node->element = current_Node->retrieve();
+		previous_Node = new_Node;
+		if (current_Node->next() != nullptr){
+			Single_node<Type> *temp_Node = new Single_node<Type>();
+			list_size++;
+			new_Node = temp_Node;
+			previous_Node->next_node = new_Node;
+		}
+		current_Node = current_Node->next();
+	}
+	list_tail = new_Node;
 }
 
 template <typename Type>
 Single_list<Type>::~Single_list() {
 	// The destructor must delete each of the nodes in the linked list. (O(n))
-
+	if (list_size != 0){
+		Single_node<Type> *current_Node = list_head;
+		Single_node<Type> *temp_Node;
+		while (current_Node != nullptr){
+			temp_Node = current_Node;
+			current_Node = current_Node->next();
+			delete temp_Node;
+		}
+		list_size = 0;
+		list_head = nullptr;
+		list_tail = nullptr;
+	}
 }
 
 template <typename Type>
@@ -221,8 +252,8 @@ Type Single_list<Type>::pop_front() {
 	}
 	Type return_Value = list_head->retrieve();
 	Single_node<Type> *new_Head = list_head->next();
+	delete list_head;
 	list_head = new_Head;
-	delete new_Head;
 	list_size--;
 	return return_Value;
 }
