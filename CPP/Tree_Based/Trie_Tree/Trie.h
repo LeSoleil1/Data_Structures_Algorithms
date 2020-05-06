@@ -75,6 +75,7 @@ Trie::Trie() : root_node(nullptr),
 
 Trie::~Trie()
 {
+	// TODO
 }
 
 int Trie::size() const
