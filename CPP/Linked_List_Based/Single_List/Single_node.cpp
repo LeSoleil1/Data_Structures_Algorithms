@@ -11,14 +11,12 @@ next_node( n ) {
 
 template <typename Type>
 Type Single_node<Type>::retrieve() const {
-	// enter your implementation here
-	return Type();
+	return element;
 }
 
 template <typename Type>
 Single_node<Type> *Single_node<Type>::next() const {
-	// enter your implementation here
-	return 0;
+	return next_node;
 }
 
 // Is an error showing up in ece250.h or elsewhere?

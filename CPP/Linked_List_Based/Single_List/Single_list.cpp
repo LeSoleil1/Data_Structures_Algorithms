@@ -25,48 +25,68 @@ Single_list<Type>::~Single_list() {
 
 template <typename Type>
 int Single_list<Type>::size() const {
-	// enter your implementation here
-	return 0;
+	// Returns the number of items in the list. (O(1))
+	return list_size;
 }
 
 template <typename Type>
 bool Single_list<Type>::empty() const {
-	// enter your implementation here
-	return true;
+	// Returns true if the list is empty, false otherwise. (O(1))
+	return (list_size == 0);
 }
 
 template <typename Type>
 Type Single_list<Type>::front() const {
-	// enter your implementation here
-	return Type();
+	// Retrieves the object stored in the node pointed to by the head pointer. This function throws a underflow if the list is empty. (O(1))
+	if (list_size == 0){
+		throw underflow;
+	}
+	Type return_Value = list_head->retrieve();
+	return return_Value;
 }
 
 template <typename Type>
 Type Single_list<Type>::back() const {
-	// enter your implementation here
-	return Type();
+	// Retrieves the object stored in the node pointed to by the tail pointer. This function throws a underflow if the list is empty. (O(1))
+	if (list_size == 0){
+		throw underflow;
+	}
+	Type return_Value = list_tail->retrieve();
+	return return_Value;
 }
 
 template <typename Type>
 Single_node<Type> *Single_list<Type>::head() const {
-	// enter your implementation here
-	return nullptr;
+	// Returns the head pointer. (O(1))
+	return list_head;
 }
 
 template <typename Type>
 Single_node<Type> *Single_list<Type>::tail() const {
-	// enter your implementation here
-	return nullptr;
+	// Returns the tail pointer. (O(1))
+	return list_tail;
 }
 
 template <typename Type>
 int Single_list<Type>::count( Type const &obj ) const {
-	// enter your implementation here
-	return 0;
+	// Returns the number of nodes in the linked list storing a value equal to the argument. (O(n))
+	if (list_size == 0){
+		return 0;
+	}
+	Single_node<Type> current_Node = list_head;
+	int counter = 0;
+	while (current_Node != nullptr){
+		if (current_Node.retrieve() == obj){
+			counter++;
+		}
+		current_Node = current_Node.next();
+	}
+	return counter;
 }
 
 template <typename Type>
 void Single_list<Type>::swap( Single_list<Type> &list ) {
+	// The swap function swaps all the member variables of this linked list with those of the argument. (O(1))
 	std::swap( list_head, list.list_head );
 	std::swap( list_tail, list.list_tail );
 	std::swap( list_size, list.list_size );
@@ -74,6 +94,7 @@ void Single_list<Type>::swap( Single_list<Type> &list ) {
 
 template <typename Type>
 Single_list<Type> &Single_list<Type>::operator=( Single_list<Type> const &rhs ) {
+	// he assignment operator makes a copy of the argument and then swaps the member variables of this singly linked list with those of the copy. (O(nlhs + nrhs))
 	Single_list<Type> copy( rhs );
 
 	swap( copy );
@@ -83,24 +104,100 @@ Single_list<Type> &Single_list<Type>::operator=( Single_list<Type> const &rhs ) 
 
 template <typename Type>
 void Single_list<Type>::push_front( Type const &obj ) {
-	// enter your implementation here
+	// Creates a new Single_node<Type> storing the argument, the next pointer of which is set to the current head pointer. The head pointer is set to this new node. If the list was originally empty, the tail pointer is set to point to the new node. (O(1))
+	Single_node<Type> new_Node = new Single_node<Type>(obj,nullptr);
+	if (list_size == 0){
+		list_size = 1;
+		list_head = new_Node;
+		list_tail = new_Node;
+	}
+	else{
+		Single_node<Type> temp_Node = list_head;
+		list_size ++;
+		list_head = new_Node;
+		new_Node.next_node = temp_Node;
+	}
 }
 
 template <typename Type>
 void Single_list<Type>::push_back( Type const &obj ) {
-	// enter your implementation here
+	// Similar to push_front, this places a new node at the back of the list. (O(1))
+	Single_node<Type> new_Node = new Single_node<Type>(obj,nullptr);
+	if (list_size == 0){
+		list_size = 1;
+		list_head = new_Node;
+		list_tail = new_Node;
+	}
+	else{
+		Single_node<Type> temp_Node = list_tail;
+		list_size ++;
+		temp_Node.next_node = new_Node;
+		list_tail = new_Node;
+	}
 }
 
 template <typename Type>
 Type Single_list<Type>::pop_front() {
-	// enter your implementation here
-	return Type();
+	// Delete the node at the front of the linked list and, as necessary, update the head and tail pointers. Return the object stored in the node being popped. Throw an underflow exception if the list is empty. (O(1))
+	if (list_size == 0){
+		throw underflow;
+	}
+	Type return_Value = list_head->retrieve();
+	Single_node<Type> new_Head = list_head->next();
+	list_head = new_Head;
+	delete new_Head;
+	list_size--;
+	return return_Value;
 }
 
 template <typename Type>
 int Single_list<Type>::erase( Type const &obj ) {
-	// enter your implementation here
+	// Delete the first node (from the front) in the linked list that contains the object equal to the argument (use == to to test for equality with the retrieved element). As necessary, update the head and tail pointers and the next pointer of any other node within the list. Return the number of nodes that were deleted. (O(n))
+	if (list_size == 0){
+		return 0;
+	}
+	if (list_size == 1){
+		if (list_head->retrieve() == obj){
+			list_size--;
+			list_head = nullptr;
+			list_tail = nullptr;
+			return 1;
+		}
+		else{
+			return 0;
+		}
+
+	}
+	if (list_head->retrieve() == obj){
+		list_size--;
+		Single_node<Type> temp_Node = list_head;
+		list_head = list_head->next();
+		delete temp_Node;
+		return 1;
+	}
+	
+	Single_node<Type> prev_Node = list_head;
+	Single_node<Type> current_Node = prev_Node.next();
+	Single_node<Type> next_Node = current_Node.next();
+
+	while (current_Node != nullptr){
+		if (current_Node.retrieve() == obj){
+			list_size--;
+			prev_Node.next_node = next_Node;
+			delete current_Node;
+			if (next_Node == nullptr){
+				list_tail = prev_Node;
+			}
+			return 1;
+
+		}
+		prev_Node = current_Node;
+		current_Node = prev_Node.next();
+		next_Node = current_Node.next();
+	}
 	return 0;
+
+		
 }
 
 // You can modify this function however you want:  it will not be tested
