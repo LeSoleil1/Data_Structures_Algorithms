@@ -202,7 +202,7 @@ void Single_list<Type>::swap( Single_list<Type> &list ) {
 
 template <typename Type>
 Single_list<Type> &Single_list<Type>::operator=( Single_list<Type> const &rhs ) {
-	// he assignment operator makes a copy of the argument and then swaps the member variables of this singly linked list with those of the copy. (O(nlhs + nrhs))
+	// The assignment operator makes a copy of the argument and then swaps the member variables of this singly linked list with those of the copy. (O(nlhs + nrhs))
 	Single_list<Type> copy( rhs );
 
 	swap( copy );
