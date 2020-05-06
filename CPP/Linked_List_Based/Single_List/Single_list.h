@@ -147,7 +147,7 @@ template <typename Type>
 Type Single_list<Type>::front() const {
 	// Retrieves the object stored in the node pointed to by the head pointer. This function throws a underflow if the list is empty. (O(1))
 	if (list_size == 0){
-		throw ('underflow');
+		throw underflow();
 	}
 	Type return_Value = list_head->retrieve();
 	return return_Value;
@@ -157,7 +157,7 @@ template <typename Type>
 Type Single_list<Type>::back() const {
 	// Retrieves the object stored in the node pointed to by the tail pointer. This function throws a underflow if the list is empty. (O(1))
 	if (list_size == 0){
-		throw ('underflow');
+		throw underflow();
 	}
 	Type return_Value = list_tail->retrieve();
 	return return_Value;
@@ -248,7 +248,7 @@ template <typename Type>
 Type Single_list<Type>::pop_front() {
 	// Delete the node at the front of the linked list and, as necessary, update the head and tail pointers. Return the object stored in the node being popped. Throw an underflow exception if the list is empty. (O(1))
 	if (list_size == 0){
-		throw ('underflow');
+		throw underflow();
 	}
 	Type return_Value = list_head->retrieve();
 	Single_node<Type> *new_Head = list_head->next();
