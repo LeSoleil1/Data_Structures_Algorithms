@@ -1,15 +1,6 @@
 #ifndef LINEAR_HASH_TABLE_H
 #define LINEAR_HASH_TABLE_H
 
-/*****************************************
- * UW User ID:  uwuserid
- * Submitted for ECE 250
- * Semester of Submission:  (Winter|Spring|Fall) 20NN
- *
- * By submitting this file, I affirm that
- * I am the author of all modifications to
- * the provided code.
- *****************************************/
 
 #include "Exception.h"
 #include "ece250.h"

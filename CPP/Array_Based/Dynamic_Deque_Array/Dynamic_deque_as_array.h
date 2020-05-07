@@ -1,8 +1,6 @@
 #ifndef DYNAMIC_DEQUE_AS_ARRAY_H
 #define DYNAMIC_DEQUE_AS_ARRAY_H
 
-
-
 #include "ece250.h"
 #include "Exception.h"
 #include <iostream>
