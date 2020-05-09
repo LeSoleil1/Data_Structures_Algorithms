@@ -334,6 +334,9 @@ int Sorted_single_list<Type>::erase(Type const &obj)
 		{
 			if (next_Node->retrieve() == obj)
 			{
+				if (next_Node == list_tail){
+					list_tail = current_Node;
+				}
 				current_Node->next_node = next_Node->next();
 				delete next_Node;
 				list_size--;
