@@ -11,6 +11,9 @@ template <typename Type>
 class Single_list;
 
 template <typename Type>
+class Sorted_single_list;
+
+template <typename Type>
 class Cyclic_list;
 
 template <typename Type>
@@ -33,6 +36,7 @@ class Single_node {
 		Single_node *next() const;
 
 		friend class Single_list<Type>;
+		friend class Sorted_single_list<Type>;
 		friend class Cyclic_list<Type>;
 		friend class Sentinel_list<Type>;
 		friend class Cyclic_sentinel_list<Type>;
