@@ -1,0 +1,49 @@
+new
+empty 1
+size 0
+member 1 1 0
+root0
+insert 2 3
+empty 0
+size 1
+member 1 1 0
+member 2 3 1
+min_x 2
+min_y 3
+max_x 2
+max_y 3
+sum_x 2
+sum_y 3
+insert 4 -2
+member 4 -2 1
+min_x 2
+min_y -2
+max_x 4
+max_y 3
+sum_x 6
+sum_y 1
+root
+	x 2
+	y 3
+	ne0
+	nw0
+	sw0
+	se
+	x 4
+	y -2
+	ne0
+	nw0
+	se0
+	sw0
+exit
+insert 5 9
+insert -7 11
+min_x -7
+min_y -2
+max_x 5
+max_y 11
+size 4
+insert 5 9
+size 4
+delete
+summary
