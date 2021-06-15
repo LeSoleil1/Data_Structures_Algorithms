@@ -3,5 +3,5 @@
 Exception.h
 Tester.h
 ece250.h
-Point_quadtree/
+/Point_quadtree
 ToDo.*
