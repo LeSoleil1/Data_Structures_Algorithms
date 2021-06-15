@@ -98,50 +98,88 @@ bool Quadtree<Type>::empty() const {
 
 template <typename Type>
 Type Quadtree<Type>::min_x() const {
-	return Type();
+	// Returns the minimum x value within the quadtree. Throw an underflow exception if the tree is empty. (O(n) but O(√n) if balanced)
+	if (size() == 0){
+		throw underflow();
+	}
+	return tree_root->min_x();
 }
 
 template <typename Type>
 Type Quadtree<Type>::min_y() const {
-	return Type();
+	// Returns the minimum y value within the quadtree. Throw an underflow exception if the tree is empty. (O(n) but O(√n) if balanced)
+	if (size() == 0){
+		throw underflow();
+	}
+	return tree_root->min_y();
 }
 
 template <typename Type>
 Type Quadtree<Type>::max_x() const {
-	return Type();
+	// Returns the maximum x value within the quadtree. Throw an underflow exception if the tree is empty. (O(n) but O(√n) if balanced)
+	if (size() == 0){
+		throw underflow();
+	}
+	return tree_root->max_x();
 }
 
 template <typename Type>
 Type Quadtree<Type>::max_y() const {
-	return Type();
+	// Returns the maximum y value within the quadtree. Throw an underflow exception if the tree is empty. (O(n) but O(√n) if balanced)
+	if (size() == 0){
+		throw underflow();
+	}
+	return tree_root->max_y();
 }
 
 template <typename Type>
 Type Quadtree<Type>::sum_x() const {
-	return Type();
+	// Returns the sum of the x value within the quadtree, respectively. The sum of the nodes of an empty tree is 0. (O(n))
+	if (size() == 0){
+		return 0;
+	}
+	return tree_root->sum_x();
 }
 
 template <typename Type>
 Type Quadtree<Type>::sum_y() const {
-	return Type();
+	// Returns the sum of the y value within the quadtree, respectively. The sum of the nodes of an empty tree is 0. (O(n))
+	if (size() == 0){
+		return 0;
+	}
+	return tree_root->sum_y();
 }
 
 template <typename Type>
 Quadtree_node<Type> *Quadtree<Type>::root() const {
-	return 0;
+	// Returns the address of the root node. If the tree is empty, the root node should be 0. (O(1))
+	return tree_root;
 }
 
 template <typename Type>
 bool Quadtree<Type>::member( Type const &x, Type const &y ) const {
-	return false;
+	// Returns true if the pair (x,y) is stored in one of the nodes of the quadtree and false otherwise. (O(n) but O(ln(n)) if balanced)
+	if (tree_root == 0){
+		return false;
+	}
+	return tree_root->member(x,y);
 }
 
 template <typename Type>
 void Quadtree<Type>::insert( Type const &x, Type const &y ) {
+	// Inserts the pair (x, y) into the quadtree. If the root is 0, a new quadtree node is created; otherwise, the task of insertion is passed to the root node.
+	if ( tree_root == 0 ) {
+		tree_root = new Quadtree_node<Type>(x,y);
+	} else{
+		tree_root->insert(x,y);
+	}	
+	count += 1;
 }
 
 template <typename Type>
 void Quadtree<Type>::clear() {
+	// Calls clear on the root if necessary and sets the root and count to 0. (O(n))
+	// TODO
 }
 
 // You can modify this function however you want:  it will not be tested

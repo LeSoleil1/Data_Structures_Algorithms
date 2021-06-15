@@ -118,45 +118,79 @@ Quadtree_node<Type> *Quadtree_node<Type>::se() const {
 
 template <typename Type>
 Type Quadtree_node<Type>::min_x() const {
-	// you may use std::min
-	return Type();
+	if (this != nullptr){
+		if (this->nw() == nullptr && this->sw() == nullptr){
+				return this->retrieve_x();
+		}else if (this->nw() != nullptr && this->sw() != nullptr){
+			return std::min(this->nw()->min_x(),this->sw()->min_x());
+		}else if (this->nw() != nullptr){
+			return this->nw()->min_x();
+		}else{
+			return this->sw()->min_x();
+		}
+	}
 }
 
 template <typename Type>
 Type Quadtree_node<Type>::min_y() const {
-	// you may use std::min
-	return Type();
+	if (this != nullptr){
+		if (this->sw() == nullptr && this->se() == nullptr){
+				return this->retrieve_y();
+		}else if (this->sw() != nullptr && this->se() != nullptr){
+			return std::min(this->sw()->min_y(),this->se()->min_y());
+		}else if (this->sw() != nullptr){
+			return this->sw()->min_y();
+		}else{
+			return this->se()->min_y();
+		}
+	}
 }
 
 template <typename Type>
 Type Quadtree_node<Type>::max_x() const {
-	// you may use std::max
-	return Type();
+	if (this != nullptr){
+		if (this->ne() == nullptr && this->se() == nullptr){
+				return this->retrieve_x();
+		}else if (this->ne() != nullptr && this->se() != nullptr){
+			return std::max(this->ne()->max_x(),this->se()->max_x());
+		}else if (this->ne() != nullptr){
+			return this->ne()->max_x();
+		}else{
+			return this->se()->max_x();
+		}
+	}
 }
 
 template <typename Type>
 Type Quadtree_node<Type>::max_y() const {
-	// you may use std::max
-	return Type();
+	if (this != nullptr){
+		if (this->nw() == nullptr && this->ne() == nullptr){
+				return this->retrieve_y();
+		}else if (this->nw() != nullptr && this->ne() != nullptr){
+			return std::max(this->ne()->max_y(),this->nw()->max_y());
+		}else if (this->ne() != nullptr){
+			return this->ne()->max_y();
+		}else{
+			return this->nw()->max_y();
+		}
+	}
 }
 
 template <typename Type>
 Type Quadtree_node<Type>::sum_x() const {
-	if ( this == 0 ) {
-		// hint...
+	if ( this == nullptr ) {
 		return 0;
 	} else {
-		return 0;
+		return this->retrieve_x() + this->sw()->sum_x() + this->se()->sum_x() + this->nw()->sum_x() + this->ne()->sum_x();
 	}
 }
 
 template <typename Type>
 Type Quadtree_node<Type>::sum_y() const {
-	if ( this == 0 ) {
-		// hint...
+	if ( this == nullptr ) {
 		return 0;
 	} else {
-		return 0;
+		return this->retrieve_y() + this->sw()->sum_y() + this->se()->sum_y() + this->nw()->sum_y() + this->ne()->sum_y();
 	}
 }
 
@@ -165,20 +199,60 @@ bool Quadtree_node<Type>::member( Type const &x, Type const &y ) const {
 	if ( this == 0 ) {
 		return false;
 	}
-
+	if (this->retrieve_x() == x && this->retrieve_y() == y){
+		return true;
+	}
+	if (this->retrieve_x() <= x){
+		if (this->retrieve_y() <= y){
+			return this->ne()-member(x,y);
+		} else {
+			return this->se()->member(x,y);
+		}
+	}else{
+		if (this->retrieve_y() <= y){
+			return this->nw()-member(x,y);
+		} else {
+			return this->sw()->member(x,y);
+		}
+	}
 	return false;
 }
 
 template <typename Type>
 bool Quadtree_node<Type>::insert( Type const &x, Type const &y ) {
-	return false;
+	if (this->retrieve_x() <= x){
+		if (this->retrieve_y() <= y){
+			if (this->ne() == nullptr){
+				this->north_east = new Quadtree_node<Type>(x,y);
+				return true;
+			}
+			return this->ne()->insert(x,y);
+		} else {
+			if (this->se() == nullptr){
+				this->south_east= new Quadtree_node<Type>(x,y);
+				return true;
+			}
+			return this->se()->insert(x,y);
+		}
+	}else{
+		if (this->retrieve_y() <= y){
+			if (this->nw() == nullptr){
+				this->north_west = new Quadtree_node<Type>(x,y);
+				return true;
+			}
+			return this->nw()->insert(x,y);
+		} else {
+			if (this->sw() == nullptr){
+				this->south_west = new Quadtree_node<Type>(x,y);
+				return true;
+			}
+			return this->sw()->insert(x,y);
+		}
+	}
 }
 
 template <typename Type>
 void Quadtree_node<Type>::clear() {
 }
-
-// Is an error showing up in ece250.h or elsewhere?
-// Did you forget a closing '}' ?
 
 #endif
