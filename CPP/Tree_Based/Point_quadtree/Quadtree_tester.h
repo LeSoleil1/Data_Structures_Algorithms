@@ -79,7 +79,11 @@ class Quadtree_tester:public Tester< Quadtree<Type> > {
 
 template <typename Type>
 void Quadtree_tester<Type>::process() {
-	if ( command == "size" ) {
+	if ( command == "new") {
+		object = new Quadtree<Type>();
+		std::cout << "Okay" << std::endl;
+	}
+	else if ( command == "size" ) {
 		// check if the size equals the next integer read
 
 		int expected_size;

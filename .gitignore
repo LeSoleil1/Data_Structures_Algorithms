@@ -1,3 +1,7 @@
 *.out
 *.pdf
+Exception.h
+Tester.h
+ece250.h
+Point_quadtree/
 ToDo.*

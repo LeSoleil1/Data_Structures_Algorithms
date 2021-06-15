@@ -86,12 +86,14 @@ Quadtree<Type>::~Quadtree() {
 
 template <typename Type>
 int Quadtree<Type>::size() const {
-	return 0;
+	// Returns the number of items in the quadtree. (O(1)) 
+	return count;
 }
 
 template <typename Type>
 bool Quadtree<Type>::empty() const {
-	return true;
+	// Returns true if the quadtree is empty, false otherwise. (O(1))
+	return (size() == 0);
 }
 
 template <typename Type>
