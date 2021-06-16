@@ -277,11 +277,6 @@ public:
 
 	vector<Point> query(Rectangle range, vector<Point> &found)
 	{
-		// if (!found.size())
-		// {
-		// 	cout << "here";
-		// 	vector<Point> found;
-		// }
 
 		if (!range.intersects(this->boundary))
 		{
