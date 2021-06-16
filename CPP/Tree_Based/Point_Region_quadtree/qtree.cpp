@@ -1,10 +1,10 @@
-// C++ Implementation of Quad Tree
+
 #include <iostream>
 #include <cmath>
 #include <random>
+#include <math.h>
 using namespace std;
 
-// Used to hold details of a point
 class Point
 {
 	int x;
@@ -24,6 +24,12 @@ public:
 	{
 		return y;
 	}
+	double distance(const Point &point)
+	{
+		double distance_x = point.x - this->x;
+		double distance_y = point.y - this->y;
+		return sqrt(pow(distance_x, 2) + pow(distance_y, 2));
+	}
 
 	friend ostream &operator<<(ostream &out, const Point &poi);
 };
@@ -40,7 +46,6 @@ class Rectangle
 	int bottom;
 
 public:
-	// Default Constructor
 	Rectangle()
 	{
 		this->x = 0;
@@ -94,9 +99,92 @@ public:
 			this->right < range.left || range.right < this->left ||
 			this->bottom < range.top || range.bottom < this->top);
 	}
+	double x_distance(Point point)
+	{
+		if (this->left <= point.get_x() && point.get_x() <= this->right)
+		{
+			return 0;
+		}
+		return min(abs(point.get_x() - this->left), abs(point.get_x() - this->right));
+	}
+	double y_distance(Point point)
+	{
+		if (this->top <= point.get_y() && point.get_y() <= this->bottom)
+		{
+			return 0;
+		}
+		return min(abs(point.get_y() - this->bottom), abs(point.get_y() - this->bottom));
+	}
+	double distance(Point point)
+	{
+		double distance_x = x_distance(point);
+		double distance_y = y_distance(point);
+		return sqrt(pow(distance_x, 2) + pow(distance_y, 2));
+	}
 
 	friend ostream &operator<<(ostream &out, const Rectangle &rec);
 };
+
+class Circle
+{
+	int x;
+	int y;
+	int r;
+
+public:
+	Circle(int const &inp_x, int const &inp_y, int const &inp_r)
+	{
+		this->x = inp_x;
+		this->y = inp_y;
+		this->r = inp_r;
+	}
+	int get_x()
+	{
+		return this->x;
+	}
+	int get_y()
+	{
+		return this->y;
+	}
+	int get_r()
+	{
+		return this->r;
+	}
+	double distnace_center(Point point)
+	{
+		return sqrt(pow((this->x - point.get_x()), 2) + pow((this->y - point.get_y()), 2));
+	}
+	bool contains(Point point)
+	{
+		double dist = this->distnace_center(point);
+		return (dist <= this->r);
+	}
+	bool intersects(Rectangle range)
+	{
+		double distance_x = abs(range.get_x() - this->x);
+		double distance_y = abs(range.get_y() - this->y);
+
+		double radius = this->r;
+		double width_half = range.get_w() / 2;
+		double height_half = range.get_h() / 2;
+
+		if (distance_x > (radius + width_half) ||
+			distance_y > (radius + height_half))
+		{
+			return false;
+		}
+		if (distance_x <= width_half || distance_y <= height_half)
+		{
+			return true;
+		}
+
+		double edges = pow((distance_x - width_half), 2) + pow((distance_y - height_half), 2);
+		return (edges <= pow(this->r, 2));
+	}
+
+	friend ostream &operator<<(ostream &out, const Circle &rec);
+};
+
 
 ostream &operator<<(ostream &out, const Rectangle &rec)
 {
@@ -107,6 +195,12 @@ ostream &operator<<(ostream &out, const Rectangle &rec)
 ostream &operator<<(ostream &out, const Point &poi)
 {
 	out << poi.x << '\t' << poi.y << '\t' << std::endl;
+	return out;
+}
+
+ostream &operator<<(ostream &out, const Circle &cir)
+{
+	out << cir.x << '\t' << cir.y << '\t' << cir.r <<  std::endl;
 	return out;
 }
 
@@ -154,7 +248,7 @@ public:
 		this->southeast = new QuadTree(se, this->capacity);
 
 		this->devided = true;
-		cout << "Devided" << std::endl;
+		// cout << "Devided" << std::endl;
 	}
 	bool insert(Point point)
 	{
@@ -181,15 +275,17 @@ public:
 			this->southwest->insert(point));
 	}
 
-	vector<Point> query(Rectangle range, vector<Point> found)
+	vector<Point> query(Rectangle range, vector<Point> &found)
 	{
-		if (!found.size())
-		{
-			vector<Point> found;
-		}
+		// if (!found.size())
+		// {
+		// 	cout << "here";
+		// 	vector<Point> found;
+		// }
 
 		if (!range.intersects(this->boundary))
 		{
+			// cout << "Not intersect";
 			return found;
 		}
 		for (int i = 0; i < this->points.size(); i++)
@@ -208,28 +304,65 @@ public:
 		}
 		return found;
 	}
+
+	// TODO K nearest neighbor
 };
 
-// Defining random range
 constexpr int MIN = 1;
 constexpr int WIDTH = 200;
 constexpr int HEIGHT = 200;
+constexpr int CAPACITY = 4;
 
-// Driver program
 int main()
 {
+	std::random_device rd;
+	std::mt19937 e2(rd());
+	std::normal_distribution<> dist_width(WIDTH / 2, WIDTH / 8);
+	std::normal_distribution<> dist_height(HEIGHT / 2, HEIGHT / 8);
+
 	Rectangle boundary(200, 200, 200, 200);
 	// Point p(10,15);
 	// cout << boundary.contains(p);
-	QuadTree qt(boundary, 4);
-	for (int i = 0; i < 50; i++)
+	QuadTree qt(boundary, CAPACITY);
+	int counter = 0;
+	for (int i = 0; i < 5000; i++)
 	{
-		Point p(rand() % WIDTH, rand() % HEIGHT);
-		cout << p;
+		int x = round(dist_width(e2));
+		int y = round(dist_height(e2));
+		Point p(x, y);
+
+		// Point p(rand() % WIDTH, rand() % HEIGHT);
+		// cout << p;
 		bool res = qt.insert(p);
-		cout << "inserted\t" << res << std::endl;
-		cout << boundary.contains(p) << std::endl;
+		if (res == 1)
+		{
+			counter++;
+			cout << p;
+		}
+		// cout << "inserted\t" << res << std::endl;
+		// cout << boundary.contains(p) << std::endl;
 	}
+	cout << counter << std::endl;
 	// cout << qt.get_boundary();
+	Rectangle range(200, 200, 100, 100);
+	vector<Point> points;
+	points = qt.query(range, points);
+	cout << points.size() << std::endl;
+	for (auto point : points)
+	{
+		cout << point << ' ';
+	}
+
+	// std::random_device rd;
+	// std::mt19937 e2(rd());
+	// std::normal_distribution<> dist(200,200);
+	// vector<int> p;
+	// for (int i = 0; i <100 ; i++){
+	// 	p.push_back(round(dist(e2)));
+	// }
+	// for (auto i : p){
+	// 	std::cout << i << ' ';
+	// }
+	// cout<<p.size();
 	return 0;
 }
