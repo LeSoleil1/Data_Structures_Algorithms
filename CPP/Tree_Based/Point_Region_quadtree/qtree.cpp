@@ -3,6 +3,9 @@
 #include <cmath>
 #include <random>
 #include <math.h>
+#include <tuple>
+
+
 using namespace std;
 
 class Point
@@ -185,7 +188,6 @@ public:
 	friend ostream &operator<<(ostream &out, const Circle &rec);
 };
 
-
 ostream &operator<<(ostream &out, const Rectangle &rec)
 {
 	out << rec.x << '\t' << rec.y << '\t' << rec.w << '\t' << rec.h << std::endl;
@@ -200,7 +202,7 @@ ostream &operator<<(ostream &out, const Point &poi)
 
 ostream &operator<<(ostream &out, const Circle &cir)
 {
-	out << cir.x << '\t' << cir.y << '\t' << cir.r <<  std::endl;
+	out << cir.x << '\t' << cir.y << '\t' << cir.r << std::endl;
 	return out;
 }
 
@@ -299,7 +301,6 @@ public:
 		}
 		return found;
 	}
-
 	// TODO K nearest neighbor
 };
 
@@ -308,8 +309,10 @@ constexpr int WIDTH = 200;
 constexpr int HEIGHT = 200;
 constexpr int CAPACITY = 4;
 
+
 int main()
 {
+
 	std::random_device rd;
 	std::mt19937 e2(rd());
 	std::normal_distribution<> dist_width(WIDTH / 2, WIDTH / 8);
