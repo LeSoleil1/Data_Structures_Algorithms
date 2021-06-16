@@ -1,28 +1,3 @@
-/*****************************************
- * Instructions
- *  - Replace 'uwuserid' with your uWaterloo User ID
- *  - Select the current calendar term and enter the year
- *  - List students with whom you had discussions and who helped you
- *
- * uWaterloo User ID:  uwuserid @uwaterloo.ca
- * Submitted for ECE 250
- * Department of Electrical and Computer Engineering
- * University of Waterloo
- * Calender Term of Submission:  (Winter|Spring|Fall) 201N
- *
- * By submitting this file, I affirm that
- * I am the author of all modifications to
- * the provided code.
- *
- * The following is a list of uWaterloo User IDs of those students
- * I had discussions with in preparing this project:
- *    -
- *
- * The following is a list of uWaterloo User IDs of those students
- * who helped me with this project (describe their help; e.g., debugging):
- *    -
- *****************************************/
-
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
@@ -179,17 +154,15 @@ void Quadtree<Type>::insert( Type const &x, Type const &y ) {
 template <typename Type>
 void Quadtree<Type>::clear() {
 	// Calls clear on the root if necessary and sets the root and count to 0. (O(n))
-	// TODO
+	// TODO: To be completed
 }
 
-// You can modify this function however you want:  it will not be tested
+
 
 template <typename T>
 std::ostream &operator<<( std::ostream &out, Quadtree<T> const &qt ) {
 	return out;
 }
 
-// Is an error showing up in ece250.h or elsewhere?
-// Did you forget a closing '}' ?
 
 #endif
