@@ -5,6 +5,7 @@
 #include <math.h>
 #include <tuple>
 
+#include <GL/glut.h>
 
 using namespace std;
 
@@ -267,6 +268,7 @@ public:
 		{
 			if (!this->devided)
 			{
+				cout << this->boundary;
 				this->subdevide();
 			}
 		}
@@ -308,26 +310,70 @@ constexpr int MIN = 1;
 constexpr int WIDTH = 200;
 constexpr int HEIGHT = 200;
 constexpr int CAPACITY = 4;
+constexpr int center_x = 200;
+constexpr int center_y = 200;
+
+void display1(void)
+{
+
+	// Line x axis
+	glColor3ub(254, 0, 0);
+	glBegin(GL_LINES);
+	glVertex3f(-1.0, 0.0, 0.0);
+	glVertex3f(1.0, 0.0, 0.0);
+	glEnd();
+
+	// Line y axis
+	glColor3ub(31, 255, 0);
+	glBegin(GL_LINES);
+	glVertex3f(0.0, -1.0, 0.0);
+	glVertex3f(0.0, 1.0, 0.0);
+	glEnd();
+
+	glFlush();
+}
 
 
-int main()
+int main(int argc, char **argv)
 {
 
 	std::random_device rd;
 	std::mt19937 e2(rd());
-	std::normal_distribution<> dist_width(WIDTH / 2, WIDTH / 8);
-	std::normal_distribution<> dist_height(HEIGHT / 2, HEIGHT / 8);
+	std::normal_distribution<> dist_width(center_x, WIDTH / 8);
+	std::normal_distribution<> dist_height(center_y, HEIGHT / 8);
 
-	Rectangle boundary(200, 200, 200, 200);
+	Rectangle boundary(center_x, center_y, WIDTH, WIDTH);
 	// Point p(10,15);
 	// cout << boundary.contains(p);
 	QuadTree qt(boundary, CAPACITY);
 	int counter = 0;
-	for (int i = 0; i < 5000; i++)
+
+	// Drawing ///////////////
+	glutInit(&argc, argv);
+	glutInitWindowSize(1000, 800);
+	glutCreateWindow("Test");
+	glClearColor(1.0, 1.0, 1.0, 1.0); // Background color
+	float x;
+	float y;
+		glClear(GL_COLOR_BUFFER_BIT);
+
+	/////////////////////////
+
+	for (int i = 0; i < 50; i++)
 	{
-		int x = round(dist_width(e2));
-		int y = round(dist_height(e2));
-		Point p(x, y);
+		int x_int = round(dist_width(e2));
+		int y_int = round(dist_height(e2));
+		Point p(x_int, y_int);
+		//////////////////////////////////
+		x = (x_int- center_x) / (WIDTH/2.0);   
+		y = (y_int- center_y) / (HEIGHT/2.0); 
+		glPointSize(3);
+		glBegin(GL_POINTS);
+		glColor3f(0.5, 0, 0);
+		glVertex2f(x, y);
+		glEnd();
+		glFlush();
+		/////////////////////////////////
 
 		// Point p(rand() % WIDTH, rand() % HEIGHT);
 		// cout << p;
@@ -335,21 +381,25 @@ int main()
 		if (res == 1)
 		{
 			counter++;
-			cout << p;
+			// cout << p;
 		}
 		// cout << "inserted\t" << res << std::endl;
 		// cout << boundary.contains(p) << std::endl;
 	}
+	///////////////////////////////////////
+	glutDisplayFunc(display1);
+	glutMainLoop();
+	//////////////////////////////////////
 	cout << counter << std::endl;
 	// cout << qt.get_boundary();
 	Rectangle range(200, 200, 100, 100);
 	vector<Point> points;
 	points = qt.query(range, points);
 	cout << points.size() << std::endl;
-	for (auto point : points)
-	{
-		cout << point << ' ';
-	}
+	// for (auto point : points)
+	// {
+	// 	cout << point << ' ';
+	// }
 
 	// std::random_device rd;
 	// std::mt19937 e2(rd());

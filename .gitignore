@@ -4,5 +4,5 @@ Exception.h
 Tester.h
 ece250.h
 qtree_struct.cpp
-test*.cpp
+test*.*
 ToDo.*
