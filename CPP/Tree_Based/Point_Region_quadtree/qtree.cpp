@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <cmath>
+// #include <cstdlib>
 #include <random>
 #include <math.h>
 #include <tuple>
@@ -11,6 +12,8 @@
 using namespace std;
 using namespace std::chrono;
 
+// int count = 0;
+// TODO make it double or type
 class Point
 {
 	int x;
@@ -320,6 +323,7 @@ public:
 		{
 			if (range.contains(this->points[i]))
 			{
+				// count++;
 				found.push_back(this->points[i]);
 			}
 		}
@@ -332,6 +336,33 @@ public:
 		}
 		return found;
 	}
+
+	vector<Point> query(Circle range, vector<Point> &found)
+	{
+
+		if (!range.intersects(this->boundary))
+		{
+			// cout << "Not intersect";
+			return found;
+		}
+		for (int i = 0; i < this->points.size(); i++)
+		{
+			if (range.contains(this->points[i]))
+			{
+				// count++;
+				found.push_back(this->points[i]);
+			}
+		}
+		if (this->devided)
+		{
+			this->northwest->query(range, found);
+			this->northeast->query(range, found);
+			this->southwest->query(range, found);
+			this->southeast->query(range, found);
+		}
+		return found;
+	}
+
 	// Temporary
 	void print_Boundaries()
 	{
@@ -344,11 +375,11 @@ public:
 		}
 		else
 		{
-			if (this->points.size() > this->capacity){
+			if (this->points.size() > this->capacity)
+			{
 				cout << this->boundary;
 				cout << this->points.size() << std::endl;
 			}
-
 		}
 	}
 	// TODO K nearest neighbor
@@ -399,6 +430,7 @@ int main(int argc, char **argv)
 	int counter = 0;
 	int x_int;
 	int y_int;
+
 	auto start = chrono::high_resolution_clock::now();
 	for (int i = 0; i < 70000; i++)
 	{
@@ -417,7 +449,7 @@ int main(int argc, char **argv)
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
-  
+
 	// To get the value of duration use the count()
 	// member function on the duration object
 	cout << "Generating the tree takes " << duration.count() << " microseconds" << std::endl;
@@ -425,13 +457,51 @@ int main(int argc, char **argv)
 	qt.print_Boundaries();
 
 	vector<Rectangle> boundaries = qt.get_boundaries();
-
-	// cout << " Number of points inserted: " << counter << std::endl;
-	// cout << qt.get_boundary();
-	Rectangle range(200, 200, 200, 200);
+	Rectangle original_range(center_x, center_y, WIDTH, HEIGHT);
 	vector<Point> points;
-	points = qt.query(range, points);
-	cout << points.size() << " Number of points in the: "  << "range: " << range << std::endl;
+	points = qt.query(original_range, points);
+	cout << " Number of points inserted: " << points.size() << std::endl;
+
+	// cout << qt.get_boundary();
+	std::chrono::duration<int64_t, std::nano> duration_q = std::chrono::duration<int64_t, std::nano>();
+	std::chrono::duration<int64_t, std::nano> duration_all = std::chrono::duration<int64_t, std::nano>();
+	for (int i = 0; i < 1000; i++)
+	{
+		// PASS A RANGE AND GET THE POINTS IN THAT RANGE
+		srand((unsigned)time(NULL));	 // make it change everytime we run the code
+		int x_rand = 100 + rand() % 201; // (200 -100 + 1)
+		int y_rand = 100 + rand() % 201; // (200 -100 + 1)
+		Rectangle range(x_rand, y_rand, 20, 20);
+		// Circle range(x_rand, y_rand,50);
+		vector<Point> pointz;
+		
+		// QTree approach
+		auto start_q = chrono::high_resolution_clock::now();
+		pointz = qt.query(range, pointz);
+		auto stop_q = high_resolution_clock::now();
+		duration_q += (stop_q - start_q);
+
+		// Brute Force
+		auto start_all = chrono::high_resolution_clock::now();
+		for (auto point : points)
+		{
+			range.contains(point);
+		}
+		auto stop_all = high_resolution_clock::now();
+		duration_all += (stop_all - start_all);
+	}
+	cout << "QTREE: " << duration_cast<microseconds>(duration_q).count() << std::endl;
+	cout << "BRUTE: " << duration_cast<microseconds>(duration_all).count() << std::endl;
+	// // PASS A RANGE AND GET THE POINTS IN THAT RANGE
+	// srand((unsigned)time(NULL));	 // make it change everytime we run the code
+	// int x_rand = 100 + rand() % 201; // (200 -100 + 1)
+	// int y_rand = 100 + rand() % 201; // (200 -100 + 1)
+	// Rectangle range(x_rand, y_rand, 50, 50);
+	// vector<Point> pointz;
+	// pointz = qt.query(range, pointz);
+	// cout << pointz.size() << " Number of points are in the: "
+	// 	 << "range: " << range << std::endl;
+	// // cout << "Number of points checked to find the points within the range: " << count << std::endl;
 
 	// // PRINT ALL THE BOUNDARIES
 	// cout << '\n'
@@ -449,76 +519,128 @@ int main(int argc, char **argv)
 	// 	cout << point << ' ';
 	// }
 
-	// Drawing ///////////////
-	glutInit(&argc, argv);
-	glutInitWindowSize(1800, 1800);
-	glutCreateWindow("Test");
-	glClearColor(1.0, 1.0, 1.0, 1.0); // Background color
-	float x;
-	float y;
-	glClear(GL_COLOR_BUFFER_BIT);
-	// counter = 0;
+	// // Drawing ///////////////
+	// glutInit(&argc, argv);
+	// glutInitWindowSize(900, 900);
+	// glutCreateWindow("Test");
+	// glClearColor(1.0, 1.0, 1.0, 1.0); // Background color
+	// float x;
+	// float y;
+	// glClear(GL_COLOR_BUFFER_BIT);
+	// // counter = 0;
 
-	// Plotting Boundaries
-	// int x_int;
-	// int y_int;
-	int w_int;
-	int h_int;
-	for (auto boundary : boundaries)
-	{
-		x_int = boundary.get_x();
-		y_int = boundary.get_y();
-		w_int = boundary.get_w();
-		h_int = boundary.get_h();
-		float x_start = x_int - w_int / 2.0;
-		float x_stop = x_int + w_int / 2.0;
-		float y_start = y_int - h_int / 2.0;
-		float y_stop = y_int + h_int / 2.0;
-		x_start = (x_start - center_x) / (WIDTH / 2.0);
-		x_stop = (x_stop - center_x) / (WIDTH / 2.0);
-		x = (x_int - center_x) / (WIDTH / 2.0);
-		y_start = (y_start - center_y) / (HEIGHT / 2.0);
-		y_stop = (y_stop - center_y) / (HEIGHT / 2.0);
-		y = (y_int - center_y) / (HEIGHT / 2.0);
-		// cout << x_start << '\t' << x_stop << '\t' << y << std::endl;
-		// cout << y_start << '\t' << y_stop << '\t' << x << std::endl;
+	// // Plotting Boundaries
+	// // int x_int;
+	// // int y_int;
+	// int w_int;
+	// int h_int;
+	// for (auto boundary : boundaries)
+	// {
+	// 	x_int = boundary.get_x();
+	// 	y_int = boundary.get_y();
+	// 	w_int = boundary.get_w();
+	// 	h_int = boundary.get_h();
+	// 	float x_start = x_int - w_int / 2.0;
+	// 	float x_stop = x_int + w_int / 2.0;
+	// 	float y_start = y_int - h_int / 2.0;
+	// 	float y_stop = y_int + h_int / 2.0;
+	// 	x_start = (x_start - center_x) / (WIDTH / 2.0);
+	// 	x_stop = (x_stop - center_x) / (WIDTH / 2.0);
+	// 	x = (x_int - center_x) / (WIDTH / 2.0);
+	// 	y_start = (y_start - center_y) / (HEIGHT / 2.0);
+	// 	y_stop = (y_stop - center_y) / (HEIGHT / 2.0);
+	// 	y = (y_int - center_y) / (HEIGHT / 2.0);
+	// 	// cout << x_start << '\t' << x_stop << '\t' << y << std::endl;
+	// 	// cout << y_start << '\t' << y_stop << '\t' << x << std::endl;
 
-		// Line x axis
-		glColor3ub(254, 0, 0);
-		glBegin(GL_LINES);
-		glVertex2f(x_start, y);
-		glVertex2f(x_stop, y);
-		glEnd();
+	// 	// Line x axis
+	// 	glColor3ub(254, 0, 0);
+	// 	glBegin(GL_LINES);
+	// 	glVertex2f(x_start, y);
+	// 	glVertex2f(x_stop, y);
+	// 	glEnd();
 
-		// Line y axis
-		glColor3ub(31, 255, 0);
-		glBegin(GL_LINES);
-		glVertex2f(x, y_start);
-		glVertex2f(x, y_stop);
-		glEnd();
+	// 	// Line y axis
+	// 	glColor3ub(31, 255, 0);
+	// 	glBegin(GL_LINES);
+	// 	glVertex2f(x, y_start);
+	// 	glVertex2f(x, y_stop);
+	// 	glEnd();
 
-		glFlush();
-	}
+	// 	glFlush();
+	// }
 
-	// Plotting points
-	for (auto point : points)
-	{
-		counter++;
-		x_int = point.get_x();
-		y_int = point.get_y();
-		x = (x_int - center_x) / (WIDTH / 2.0);
-		y = (y_int - center_y) / (HEIGHT / 2.0);
-		glPointSize(3);
-		glBegin(GL_POINTS);
-		glColor3f(0.5, 0, 0);
-		glVertex2f(x, y);
-		glEnd();
-		glFlush();
-	}
+	// // Plotting points
+	// for (auto point : points)
+	// {
+	// 	x_int = point.get_x();
+	// 	y_int = point.get_y();
+	// 	x = (x_int - center_x) / (WIDTH / 2.0);
+	// 	y = (y_int - center_y) / (HEIGHT / 2.0);
+	// 	glPointSize(3);
+	// 	glBegin(GL_POINTS);
+	// 	glColor3f(0.5, 0, 0);
+	// 	glVertex2f(x, y);
+	// 	glEnd();
+	// 	glFlush();
+	// }
 
-	// cout << counter;
-	// glutDisplayFunc(display1);
-	glutMainLoop();
-	//////////////////////////////////////
+	// // PLOTTING THE SPECIFIC POINTS IN THE SPECIFIED REGION
+	// // FIRST PLOT THE REGION
+	// // Rectangle
+	// x_int = range.get_x();
+	// y_int = range.get_y();
+	// w_int = range.get_w();
+	// h_int = range.get_h();
+	// float x_start = x_int - w_int / 2.0;
+	// float x_stop = x_int + w_int / 2.0;
+	// float y_start = y_int - h_int / 2.0;
+	// float y_stop = y_int + h_int / 2.0;
+	// x_start = (x_start - center_x) / (WIDTH / 2.0);
+	// x_stop = (x_stop - center_x) / (WIDTH / 2.0);
+	// y_start = (y_start - center_y) / (HEIGHT / 2.0);
+	// y_stop = (y_stop - center_y) / (HEIGHT / 2.0);
+	// cout << x_start << '\t' << x_stop << std::endl;
+	// cout << y_start << '\t' << y_stop << std::endl;
+	// // if (x_start < -1) {	x_start = -.99;}
+	// // if (x_start > 1) {	x_start = .99;}
+	// // if (x_stop < -1) {	x_stop = -.99;}
+	// // if (x_stop > 1) {	x_stop = .99;}
+	// // if (y_start < -1) {	y_start = -.99;}
+	// // if (y_start > 1) {	y_start = .99;}
+	// // if (y_stop < -1) {	y_stop = -.99;}
+	// // if (y_stop > 1) {	y_stop = .99;}
+
+	// cout << x_start << '\t' << x_stop << std::endl;
+	// cout << y_start << '\t' << y_stop << std::endl;
+	// glLineWidth(5);
+	// glBegin(GL_LINE_LOOP);{
+	// 	glColor3ub(0, 0, 250);
+	// 	glColor4f(1.0, 0.0, 0.0, 0.5);
+	// 	glVertex2f(x_start,y_stop);
+	// 	glVertex2f(x_stop, y_stop);
+	// 	glVertex2f(x_stop, y_start);
+	// 	glVertex2f(x_start, y_start);
+	// }
+	// glEnd();
+	// // POINTS
+	// for (auto point : pointz)
+	// {
+	// 	x_int = point.get_x();
+	// 	y_int = point.get_y();
+	// 	x = (x_int - center_x) / (WIDTH / 2.0);
+	// 	y = (y_int - center_y) / (HEIGHT / 2.0);
+	// 	glPointSize(3);
+	// 	glBegin(GL_POINTS);
+	// 	glColor3f(0, 1, 0);
+	// 	glVertex2f(x, y);
+	// 	glEnd();
+	// 	glFlush();
+	// }
+
+	// // cout << counter;
+	// // glutDisplayFunc(display1);
+	// glutMainLoop();
+	// //////////////////////////////////////
 	return 0;
 }
