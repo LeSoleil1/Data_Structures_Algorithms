@@ -12,24 +12,24 @@
 using namespace std;
 using namespace std::chrono;
 
-// int count = 0;
+int count = 0;
 // TODO make it double or type
 class Point
 {
-	int x;
-	int y;
+	double x;
+	double y;
 
 public:
-	Point(int const &inp_x, int const &inp_y)
+	Point(double const &inp_x, double const &inp_y)
 	{
 		x = inp_x;
 		y = inp_y;
 	}
-	int get_x()
+	double get_x()
 	{
 		return x;
 	}
-	int get_y()
+	double get_y()
 	{
 		return y;
 	}
@@ -39,20 +39,20 @@ public:
 		double distance_y = point.y - this->y;
 		return sqrt(pow(distance_x, 2) + pow(distance_y, 2));
 	}
-
+	friend bool operator==(const Point &lhs, const Point &rhs){return (lhs.x == rhs.x && lhs.y == rhs.y);}
 	friend ostream &operator<<(ostream &out, const Point &poi);
 };
 
 class Rectangle
 {
-	int x;
-	int y;
-	int w;
-	int h;
-	int left;
-	int right;
-	int top;
-	int bottom;
+	double x;
+	double y;
+	double w;
+	double h;
+	double left;
+	double right;
+	double top;
+	double bottom;
 
 public:
 	Rectangle()
@@ -66,7 +66,7 @@ public:
 		this->top = 0;
 		this->bottom = 0;
 	}
-	Rectangle(int const &inp_x, int const &inp_y, int const &inp_w, int const &inp_h)
+	Rectangle(double const &inp_x, double const &inp_y, double const &inp_w, double const &inp_h)
 	{
 		this->x = inp_x;
 		this->y = inp_y;
@@ -77,26 +77,26 @@ public:
 		this->top = inp_y - inp_h / 2;
 		this->bottom = inp_y + inp_h / 2;
 	}
-	int get_x()
+	double get_x()
 	{
 		return this->x;
 	}
-	int get_y()
+	double get_y()
 	{
 		return this->y;
 	}
-	int get_w()
+	double get_w()
 	{
 		return this->w;
 	}
-	int get_h()
+	double get_h()
 	{
 		return this->h;
 	}
 	bool contains(Point point)
 	{
-		int point_x = point.get_x();
-		int point_y = point.get_y();
+		double point_x = point.get_x();
+		double point_y = point.get_y();
 		return (this->left <= point_x &&
 				point_x <= this->right &&
 				this->top <= point_y &&
@@ -136,26 +136,26 @@ public:
 
 class Circle
 {
-	int x;
-	int y;
-	int r;
+	double x;
+	double y;
+	double r;
 
 public:
-	Circle(int const &inp_x, int const &inp_y, int const &inp_r)
+	Circle(double const &inp_x, double const &inp_y, double const &inp_r)
 	{
 		this->x = inp_x;
 		this->y = inp_y;
 		this->r = inp_r;
 	}
-	int get_x()
+	double get_x()
 	{
 		return this->x;
 	}
-	int get_y()
+	double get_y()
 	{
 		return this->y;
 	}
-	int get_r()
+	double get_r()
 	{
 		return this->r;
 	}
@@ -264,10 +264,10 @@ public:
 	}
 	void subdevide()
 	{
-		int x = this->boundary.get_x();
-		int y = this->boundary.get_y();
-		int w = this->boundary.get_w();
-		int h = this->boundary.get_h();
+		double x = this->boundary.get_x();
+		double y = this->boundary.get_y();
+		double w = this->boundary.get_w();
+		double h = this->boundary.get_h();
 
 		Rectangle ne = Rectangle(x + w / 4, y - h / 4, w / 2, h / 2); //CHECK
 		Rectangle nw = Rectangle(x - w / 4, y - h / 4, w / 2, h / 2); //CHECK
@@ -321,18 +321,30 @@ public:
 		}
 		for (int i = 0; i < this->points.size(); i++)
 		{
+			count++;
 			if (range.contains(this->points[i]))
 			{
-				// count++;
 				found.push_back(this->points[i]);
 			}
 		}
 		if (this->devided)
 		{
-			this->northwest->query(range, found);
-			this->northeast->query(range, found);
-			this->southwest->query(range, found);
-			this->southeast->query(range, found);
+			if (this->northwest != nullptr && range.intersects(this->northwest->boundary))
+			{
+				this->northwest->query(range, found);
+			}
+			if (this->northeast != nullptr && range.intersects(this->northeast->boundary))
+			{
+				this->northeast->query(range, found);
+			}
+			if (this->southwest != nullptr && range.intersects(this->southwest->boundary))
+			{
+				this->southwest->query(range, found);
+			}
+			if (this->southeast != nullptr && range.intersects(this->southeast->boundary))
+			{
+				this->southeast->query(range, found);
+			}
 		}
 		return found;
 	}
@@ -355,10 +367,22 @@ public:
 		}
 		if (this->devided)
 		{
-			this->northwest->query(range, found);
-			this->northeast->query(range, found);
-			this->southwest->query(range, found);
-			this->southeast->query(range, found);
+			if (this->northwest != nullptr && range.intersects(this->northwest->boundary))
+			{
+				this->northwest->query(range, found);
+			}
+			if (this->northeast != nullptr && range.intersects(this->northeast->boundary))
+			{
+				this->northeast->query(range, found);
+			}
+			if (this->southwest != nullptr && range.intersects(this->southwest->boundary))
+			{
+				this->southwest->query(range, found);
+			}
+			if (this->southeast != nullptr && range.intersects(this->southeast->boundary))
+			{
+				this->southeast->query(range, found);
+			}
 		}
 		return found;
 	}
@@ -388,7 +412,7 @@ public:
 constexpr int MIN = 1;
 constexpr int WIDTH = 200;
 constexpr int HEIGHT = 200;
-constexpr int CAPACITY = 4;
+constexpr int CAPACITY = 700;
 constexpr int center_x = 200;
 constexpr int center_y = 200;
 
@@ -417,8 +441,8 @@ int main(int argc, char **argv)
 {
 	auto mean_x = center_x;
 	auto mean_y = center_y;
-	auto stddev_x = WIDTH / 8;
-	auto stddev_y = HEIGHT / 8;
+	auto stddev_x = WIDTH / 4;
+	auto stddev_y = HEIGHT / 4;
 
 	std::random_device rd;
 	std::mt19937 e2(rd());
@@ -465,16 +489,20 @@ int main(int argc, char **argv)
 	// cout << qt.get_boundary();
 	std::chrono::duration<int64_t, std::nano> duration_q = std::chrono::duration<int64_t, std::nano>();
 	std::chrono::duration<int64_t, std::nano> duration_all = std::chrono::duration<int64_t, std::nano>();
-	for (int i = 0; i < 1000; i++)
+	int max_iter = 1000;
+	int count_brute = 0;
+	srand((unsigned)time(0)); // make it change everytime we run the code
+	for (int i = 0; i < max_iter; i++)
 	{
 		// PASS A RANGE AND GET THE POINTS IN THAT RANGE
-		srand((unsigned)time(NULL));	 // make it change everytime we run the code
-		int x_rand = 100 + rand() % 201; // (200 -100 + 1)
-		int y_rand = 100 + rand() % 201; // (200 -100 + 1)
-		Rectangle range(x_rand, y_rand, 20, 20);
+		// int x_rand = 100 + rand() % 201; // (200 -100 + 1)
+		// int y_rand = 100 + rand() % 201; // (200 -100 + 1)
+		// Rectangle range(x_rand, y_rand, 20, 20);
 		// Circle range(x_rand, y_rand,50);
+		// Rectangle range(200,200,20,20);
+		Circle range(200,200,20);
 		vector<Point> pointz;
-		
+
 		// QTree approach
 		auto start_q = chrono::high_resolution_clock::now();
 		pointz = qt.query(range, pointz);
@@ -482,16 +510,27 @@ int main(int argc, char **argv)
 		duration_q += (stop_q - start_q);
 
 		// Brute Force
+		vector<Point> pointz_test;
 		auto start_all = chrono::high_resolution_clock::now();
 		for (auto point : points)
 		{
-			range.contains(point);
+			count_brute++;
+			if (range.contains(point)){
+				pointz_test.push_back(point);
+			}
 		}
-		auto stop_all = high_resolution_clock::now();
+		auto stop_all = chrono::high_resolution_clock::now();
 		duration_all += (stop_all - start_all);
+
+		// cout << (pointz.size() == pointz_test.size());
+		cout << (pointz == pointz_test);
 	}
-	cout << "QTREE: " << duration_cast<microseconds>(duration_q).count() << std::endl;
-	cout << "BRUTE: " << duration_cast<microseconds>(duration_all).count() << std::endl;
+	cout << "QTREE: " << duration_cast<microseconds>(duration_q).count() / max_iter << std::endl;
+	cout << "QTREE: Number of points checked to find the points within the range: " << count << std::endl;
+	cout << "BRUTE: " << duration_cast<microseconds>(duration_all).count() / max_iter << std::endl;
+	cout << "BRUTE: Number of points checked to find the points within the range: " << count_brute << std::endl;
+
+
 	// // PASS A RANGE AND GET THE POINTS IN THAT RANGE
 	// srand((unsigned)time(NULL));	 // make it change everytime we run the code
 	// int x_rand = 100 + rand() % 201; // (200 -100 + 1)
@@ -501,7 +540,7 @@ int main(int argc, char **argv)
 	// pointz = qt.query(range, pointz);
 	// cout << pointz.size() << " Number of points are in the: "
 	// 	 << "range: " << range << std::endl;
-	// // cout << "Number of points checked to find the points within the range: " << count << std::endl;
+	// cout << "Number of points checked to find the points within the range: " << count << std::endl;
 
 	// // PRINT ALL THE BOUNDARIES
 	// cout << '\n'
@@ -530,7 +569,7 @@ int main(int argc, char **argv)
 	// // counter = 0;
 
 	// // Plotting Boundaries
-	// // int x_int;
+	// // int x_int;;
 	// // int y_int;
 	// int w_int;
 	// int h_int;
