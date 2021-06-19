@@ -43,7 +43,7 @@ public:
 		double distance_z = point.z - this->z;
 		return sqrt(pow(distance_x, 2) + pow(distance_y, 2) + pow(distance_z, 2));
 	}
-
+	friend bool operator==(const Point &lhs, const Point &rhs) { return (lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z); }
 	friend ostream &operator<<(ostream &out, const Point &poi);
 };
 
@@ -224,7 +224,7 @@ public:
 
 		if (distance_x > (radius + width_half) ||
 			distance_y > (radius + height_half) ||
-			distance_z > (radius + height_half))
+			distance_z > (radius + depth_half))
 		{
 			return false;
 		}
@@ -239,3 +239,225 @@ public:
 
 	friend ostream &operator<<(ostream &out, const Sphere &spe);
 };
+
+ostream &operator<<(ostream &out, const Cuboid &cub)
+{
+	out << "Center_x: " << cub.x << '\t' << "Center_y: " << cub.y << '\t' << "Center_z: " << cub.z << '\t' << "Range_x: " << cub.w << '\t' << "Range_y: " << cub.h << "Range_z: " << cub.d << std::endl;
+	return out;
+}
+
+ostream &operator<<(ostream &out, const Point &poi)
+{
+	out << poi.x << '\t' << poi.y << '\t' << poi.z << std::endl;
+	return out;
+}
+
+ostream &operator<<(ostream &out, const Sphere &spe)
+{
+	out << spe.x << '\t' << spe.y << '\t' << spe.z << '\t' << spe.r << std::endl;
+	return out;
+}
+
+class OCTree
+{
+	Cuboid boundary;
+	int capacity;
+	std::vector<Point> points;
+	bool devided;
+
+	OCTree *northwest;
+	OCTree *northeast;
+	OCTree *southwest;
+	OCTree *southeast;
+
+public:
+	static std::vector<Cuboid> boundaries;
+
+	OCTree(Cuboid inp_boundary, int inp_capacity)
+	{
+		if (inp_capacity < 1)
+		{
+			throw std::invalid_argument("received capacity less than 1");
+		}
+		this->devided = false;
+		this->boundary = inp_boundary;
+		this->capacity = inp_capacity;
+		this->points = std::vector<Point>();
+
+		this->northwest = nullptr;
+		this->northeast = nullptr;
+		this->southwest = nullptr;
+		this->southeast = nullptr;
+	}
+	std::vector<OCTree *> get_children()
+	{
+		if (this->northeast != nullptr)
+		{
+			std::vector<OCTree *> ret = {this->northeast, this->northwest, this->southeast, this->southwest};
+			return ret;
+		}
+		std::vector<OCTree *> ret = {nullptr, nullptr, nullptr, nullptr};
+		return ret;
+	}
+
+	Cuboid get_boundary()
+	{
+		return boundary;
+	}
+	vector<Cuboid> get_boundaries()
+	{
+		return boundaries;
+	}
+	void subdevide()
+	{
+		double x = this->boundary.get_x();
+		double y = this->boundary.get_y();
+		double w = this->boundary.get_w();
+		double h = this->boundary.get_h();
+
+		Cuboid ne = Cuboid(x + w / 4, y - h / 4, w / 2, h / 2); //CHECK
+		Cuboid nw = Cuboid(x - w / 4, y - h / 4, w / 2, h / 2); //CHECK
+		Cuboid se = Cuboid(x + w / 4, y + h / 4, w / 2, h / 2); //CHECK
+		Cuboid sw = Cuboid(x - w / 4, y + h / 4, w / 2, h / 2); //CHECK
+
+		this->northeast = new OCTree(ne, this->capacity);
+		this->northwest = new OCTree(nw, this->capacity);
+		this->southeast = new OCTree(se, this->capacity);
+		this->southwest = new OCTree(sw, this->capacity);
+
+		this->devided = true;
+		// cout << "Devided" << std::endl;
+	}
+
+	bool insert(Point point)
+	{
+		if (!this->boundary.contains(point))
+		{
+			return false;
+		}
+		if (this->points.size() < this->capacity) //CHECK
+		{
+			// cout << this->boundary << std::endl;
+			// cout << "This boundary has capacity " << this->boundary;
+			this->points.push_back(point);
+			return true;
+		}
+		else if (!this->devided)
+		{
+			// cout << this->boundary << std::endl;
+			// cout << "This boundary doesn't have capacity!!! " << this->boundary;
+			boundaries.push_back(boundary);
+			this->subdevide();
+		}
+
+		return (
+			this->northeast->insert(point) ||
+			this->northwest->insert(point) ||
+			this->southeast->insert(point) ||
+			this->southwest->insert(point));
+	}
+
+	vector<Point> query(Cuboid range, vector<Point> &found)
+	{
+
+		if (!range.intersects(this->boundary))
+		{
+			// cout << "Not intersect";
+			return found;
+		}
+		for (int i = 0; i < this->points.size(); i++)
+		{
+			count++;
+			if (range.contains(this->points[i]))
+			{
+				found.push_back(this->points[i]);
+			}
+		}
+		if (this->devided)
+		{
+			if (this->northwest != nullptr && range.intersects(this->northwest->boundary))
+			{
+				this->northwest->query(range, found);
+			}
+			if (this->northeast != nullptr && range.intersects(this->northeast->boundary))
+			{
+				this->northeast->query(range, found);
+			}
+			if (this->southwest != nullptr && range.intersects(this->southwest->boundary))
+			{
+				this->southwest->query(range, found);
+			}
+			if (this->southeast != nullptr && range.intersects(this->southeast->boundary))
+			{
+				this->southeast->query(range, found);
+			}
+		}
+		return found;
+	}
+
+	vector<Point> query(Sphere range, vector<Point> &found)
+	{
+
+		if (!range.intersects(this->boundary))
+		{
+			// cout << "Not intersect";
+			return found;
+		}
+		for (int i = 0; i < this->points.size(); i++)
+		{
+			if (range.contains(this->points[i]))
+			{
+				// count++;
+				found.push_back(this->points[i]);
+			}
+		}
+		if (this->devided)
+		{
+			if (this->northwest != nullptr && range.intersects(this->northwest->boundary))
+			{
+				this->northwest->query(range, found);
+			}
+			if (this->northeast != nullptr && range.intersects(this->northeast->boundary))
+			{
+				this->northeast->query(range, found);
+			}
+			if (this->southwest != nullptr && range.intersects(this->southwest->boundary))
+			{
+				this->southwest->query(range, found);
+			}
+			if (this->southeast != nullptr && range.intersects(this->southeast->boundary))
+			{
+				this->southeast->query(range, found);
+			}
+		}
+		return found;
+	}
+
+	// Temporary
+	void print_Boundaries()
+	{
+		if (this->devided)
+		{
+			this->northwest->print_Boundaries();
+			this->northeast->print_Boundaries();
+			this->southwest->print_Boundaries();
+			this->southeast->print_Boundaries();
+		}
+		else
+		{
+			if (this->points.size() > this->capacity)
+			{
+				cout << this->boundary;
+				cout << this->points.size() << std::endl;
+			}
+		}
+	}
+	// TODO K nearest neighbor
+};
+
+constexpr int MIN = 1;
+constexpr int WIDTH = 200;
+constexpr int HEIGHT = 200;
+constexpr int CAPACITY = 700;
+constexpr int center_x = 200;
+constexpr int center_y = 200;
