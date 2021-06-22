@@ -88,8 +88,8 @@ public:
 		this->d = inp_d;
 		this->left = inp_x - inp_w / 2;
 		this->right = inp_x + inp_w / 2;
-		this->top = inp_y - inp_h / 2;
-		this->bottom = inp_y + inp_h / 2;
+		this->top = inp_y + inp_h / 2;
+		this->bottom = inp_y - inp_h / 2;
 		this->front = inp_z + inp_d / 2;
 		this->back = inp_z - inp_d / 2;
 	}
@@ -124,8 +124,8 @@ public:
 		double point_z = point.get_z();
 		return (this->left <= point_x &&
 				point_x <= this->right &&
-				this->top <= point_y &&
-				point_y <= this->bottom &&
+				this->bottom <= point_y &&
+				point_y <= this->top &&
 				this->back <= point_z &&
 				point_z <= this->front);
 	}
@@ -146,7 +146,7 @@ public:
 	}
 	double y_distance(Point point)
 	{
-		if (this->top <= point.get_y() && point.get_y() <= this->bottom)
+		if (this->bottom <= point.get_y() && point.get_y() <= this->top)
 		{
 			return 0;
 		}
@@ -154,7 +154,7 @@ public:
 	}
 	double z_distance(Point point)
 	{
-		if (this->front <= point.get_z() && point.get_z() <= this->back)
+		if (this->back <= point.get_z() && point.get_z() <= this->front)
 		{
 			return 0;
 		}
@@ -242,13 +242,13 @@ public:
 
 ostream &operator<<(ostream &out, const Cuboid &cub)
 {
-	out << "Center_x: " << cub.x << '\t' << "Center_y: " << cub.y << '\t' << "Center_z: " << cub.z << '\t' << "Range_x: " << cub.w << '\t' << "Range_y: " << cub.h << "Range_z: " << cub.d << std::endl;
+	out << "Center_x: " << cub.x << '\t' << "Center_y: " << cub.y << '\t' << "Center_z: " << cub.z << '\t' << "Range_x: " << cub.w << '\t' << "Range_y: " << cub.h << '\t' << "Range_z: " << cub.d << std::endl;
 	return out;
 }
 
 ostream &operator<<(ostream &out, const Point &poi)
 {
-	out << poi.x << '\t' << poi.y << '\t' << poi.z << std::endl;
+	out << "X: " << poi.x << '\t' << "Y: " << poi.y << '\t' << "Z: " << poi.z << std::endl;
 	return out;
 }
 
@@ -326,14 +326,14 @@ public:
 		double h = this->boundary.get_h();
 		double d = this->boundary.get_d();
 
-		Cuboid nef = Cuboid(x + w / 4, y - h / 4, z + d / 4, w / 2, h / 2, d / 2); //CHECK
-		Cuboid nwf = Cuboid(x - w / 4, y - h / 4, z + d / 4, w / 2, h / 2, d / 2); //CHECK
-		Cuboid sef = Cuboid(x + w / 4, y + h / 4, z + d / 4, w / 2, h / 2, d / 2); //CHECK
-		Cuboid swf = Cuboid(x - w / 4, y + h / 4, z + d / 4, w / 2, h / 2, d / 2); //CHECK
-		Cuboid neb = Cuboid(x + w / 4, y - h / 4, z - d / 4, w / 2, h / 2, d / 2); //CHECK
-		Cuboid nwb = Cuboid(x - w / 4, y - h / 4, z - d / 4, w / 2, h / 2, d / 2); //CHECK
-		Cuboid seb = Cuboid(x + w / 4, y + h / 4, z - d / 4, w / 2, h / 2, d / 2); //CHECK
-		Cuboid swb = Cuboid(x - w / 4, y + h / 4, z - d / 4, w / 2, h / 2, d / 2); //CHECK
+		Cuboid nef = Cuboid(x + w / 4, y + h / 4, z + d / 4, w / 2, h / 2, d / 2); //CHECK
+		Cuboid nwf = Cuboid(x - w / 4, y + h / 4, z + d / 4, w / 2, h / 2, d / 2); //CHECK
+		Cuboid sef = Cuboid(x + w / 4, y - h / 4, z + d / 4, w / 2, h / 2, d / 2); //CHECK
+		Cuboid swf = Cuboid(x - w / 4, y - h / 4, z + d / 4, w / 2, h / 2, d / 2); //CHECK
+		Cuboid neb = Cuboid(x + w / 4, y + h / 4, z - d / 4, w / 2, h / 2, d / 2); //CHECK
+		Cuboid nwb = Cuboid(x - w / 4, y + h / 4, z - d / 4, w / 2, h / 2, d / 2); //CHECK
+		Cuboid seb = Cuboid(x + w / 4, y - h / 4, z - d / 4, w / 2, h / 2, d / 2); //CHECK
+		Cuboid swb = Cuboid(x - w / 4, y - h / 4, z - d / 4, w / 2, h / 2, d / 2); //CHECK
 
 		this->northeastFront = new OCTree(nef, this->capacity);
 		this->northwestFront = new OCTree(nwf, this->capacity);
@@ -345,7 +345,7 @@ public:
 		this->southwestBack = new OCTree(swb, this->capacity);
 
 		this->devided = true;
-		// cout << "Devided" << std::endl;
+		cout << "Devided" << std::endl;
 	}
 
 	bool insert(Point point)
@@ -356,15 +356,16 @@ public:
 		}
 		if (this->points.size() < this->capacity) //CHECK
 		{
-			// cout << this->boundary << std::endl;
-			// cout << "This boundary has capacity " << this->boundary;
+			cout << this->boundary << std::endl;
+			cout << "This boundary has capacity " << this->boundary;
 			this->points.push_back(point);
+			count++;
 			return true;
 		}
 		else if (!this->devided)
 		{
-			// cout << this->boundary << std::endl;
-			// cout << "This boundary doesn't have capacity!!! " << this->boundary;
+			cout << this->boundary << std::endl;
+			cout << "This boundary doesn't have capacity!!! " << this->boundary;
 			boundaries.push_back(boundary);
 			this->subdevide();
 		}
@@ -385,7 +386,7 @@ public:
 
 		if (!range.intersects(this->boundary))
 		{
-			// cout << "Not intersect";
+			cout << "Not intersect";
 			return found;
 		}
 		for (int i = 0; i < this->points.size(); i++)
@@ -394,6 +395,7 @@ public:
 			if (range.contains(this->points[i]))
 			{
 				found.push_back(this->points[i]);
+				// count++;
 			}
 		}
 		if (this->devided)
@@ -519,9 +521,9 @@ constexpr int WIDTH = 200;
 constexpr int HEIGHT = 200;
 constexpr int DEPTH = 200;
 constexpr int CAPACITY = 4;
-constexpr int center_x = 200;
-constexpr int center_y = 200;
-constexpr int center_z = 200;
+constexpr int center_x = 0;
+constexpr int center_y = 0;
+constexpr int center_z = 0;
 
 std::vector<Cuboid> OCTree::boundaries = std::vector<Cuboid>();
 
@@ -542,6 +544,7 @@ int main(int argc, char **argv)
 
 	Cuboid boundary(center_x, center_y, center_z, WIDTH, WIDTH, DEPTH);
 	OCTree ot(boundary, CAPACITY);
+	vector <Point> inserted_points = vector<Point>();
 	int counter = 0;
 	int x_int;
 	int y_int;
@@ -553,13 +556,13 @@ int main(int argc, char **argv)
 		x_int = round(dist_width(e2));
 		y_int = round(dist_height(e2));
 		z_int = round(dist_depth(e2));
-		Point p(x_int, y_int,z_int);
-		// Point p(rand() % WIDTH, rand() % HEIGHT);
-		// cout << p;
+		Point p(x_int, y_int, z_int);
+		cout << p;
 		bool res = ot.insert(p);
 		if (res == 1)
 		{
 			counter++;
+			inserted_points.push_back(p);
 		}
 		cout << "inserted\t" << res << std::endl;
 		cout << boundary.contains(p) << std::endl;
@@ -570,11 +573,17 @@ int main(int argc, char **argv)
 	// To get the value of duration use the count()
 	// member function on the duration object
 	cout << "Generating the tree takes " << duration.count() << " microseconds" << std::endl;
+	// cout << count;
+	for (auto point:inserted_points){
+		if(boundary.contains(point)){
+			cout << point;
+		}
+	}
 
-	ot.print_Boundaries();
+	// ot.print_Boundaries();
 
 	vector<Cuboid> boundaries = ot.get_boundaries();
-	Cuboid original_range(center_x, center_y, center_z ,WIDTH, HEIGHT, DEPTH);
+	Cuboid original_range(center_x, center_y, center_z, WIDTH, HEIGHT, DEPTH);
 	vector<Point> points;
 	points = ot.query(original_range, points);
 	cout << " Number of points inserted: " << points.size() << std::endl;
