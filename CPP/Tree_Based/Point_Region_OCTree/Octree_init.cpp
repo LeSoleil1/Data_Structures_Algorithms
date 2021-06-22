@@ -133,8 +133,8 @@ public:
 	{
 		return !(
 			this->right < range.left || range.right < this->left ||
-			this->bottom < range.top || range.bottom < this->top ||
-			this->back < range.front || range.back < this->front);
+			this->top < range.bottom || range.top < this->bottom ||
+			this->front < range.back || range.front < this->back);
 	}
 	double x_distance(Point point)
 	{
@@ -345,7 +345,7 @@ public:
 		this->southwestBack = new OCTree(swb, this->capacity);
 
 		this->devided = true;
-		cout << "Devided" << std::endl;
+		// cout << "Devided" << std::endl;
 	}
 
 	bool insert(Point point)
@@ -356,16 +356,16 @@ public:
 		}
 		if (this->points.size() < this->capacity) //CHECK
 		{
-			cout << this->boundary << std::endl;
-			cout << "This boundary has capacity " << this->boundary;
+			// cout << this->boundary << std::endl;
+			// cout << "This boundary has capacity " << this->boundary;
 			this->points.push_back(point);
 			count++;
 			return true;
 		}
 		else if (!this->devided)
 		{
-			cout << this->boundary << std::endl;
-			cout << "This boundary doesn't have capacity!!! " << this->boundary;
+			// cout << this->boundary << std::endl;
+			// cout << "This boundary doesn't have capacity!!! " << this->boundary;
 			boundaries.push_back(boundary);
 			this->subdevide();
 		}
@@ -391,11 +391,9 @@ public:
 		}
 		for (int i = 0; i < this->points.size(); i++)
 		{
-			count++;
 			if (range.contains(this->points[i]))
 			{
 				found.push_back(this->points[i]);
-				// count++;
 			}
 		}
 		if (this->devided)
@@ -448,7 +446,6 @@ public:
 		{
 			if (range.contains(this->points[i]))
 			{
-				// count++;
 				found.push_back(this->points[i]);
 			}
 		}
@@ -520,7 +517,7 @@ constexpr int MIN = 1;
 constexpr int WIDTH = 200;
 constexpr int HEIGHT = 200;
 constexpr int DEPTH = 200;
-constexpr int CAPACITY = 4;
+constexpr int CAPACITY = 400;
 constexpr int center_x = 0;
 constexpr int center_y = 0;
 constexpr int center_z = 0;
@@ -551,21 +548,21 @@ int main(int argc, char **argv)
 	int z_int;
 
 	auto start = chrono::high_resolution_clock::now();
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 70000; i++)
 	{
 		x_int = round(dist_width(e2));
 		y_int = round(dist_height(e2));
 		z_int = round(dist_depth(e2));
 		Point p(x_int, y_int, z_int);
-		cout << p;
+		// cout << p;
 		bool res = ot.insert(p);
 		if (res == 1)
 		{
 			counter++;
 			inserted_points.push_back(p);
 		}
-		cout << "inserted\t" << res << std::endl;
-		cout << boundary.contains(p) << std::endl;
+		// cout << "inserted\t" << res << std::endl;
+		// cout << boundary.contains(p) << std::endl;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
@@ -574,65 +571,66 @@ int main(int argc, char **argv)
 	// member function on the duration object
 	cout << "Generating the tree takes " << duration.count() << " microseconds" << std::endl;
 	// cout << count;
-	for (auto point:inserted_points){
-		if(boundary.contains(point)){
-			cout << point;
-		}
-	}
+	// for (auto point:inserted_points){
+	// 	if(boundary.contains(point)){
+	// 		cout << point;
+	// 	}
+	// }
 
 	// ot.print_Boundaries();
 
 	vector<Cuboid> boundaries = ot.get_boundaries();
-	Cuboid original_range(center_x, center_y, center_z, WIDTH, HEIGHT, DEPTH);
+	Cuboid test_range(center_x, center_y, center_z, WIDTH, HEIGHT, DEPTH);
+	// cout << test_range << std::endl;
 	vector<Point> points;
-	points = ot.query(original_range, points);
+	points = ot.query(test_range, points);
 	cout << " Number of points inserted: " << points.size() << std::endl;
 
-	// // cout << ot.get_boundary();
-	// std::chrono::duration<int64_t, std::nano> duration_q = std::chrono::duration<int64_t, std::nano>();
-	// std::chrono::duration<int64_t, std::nano> duration_all = std::chrono::duration<int64_t, std::nano>();
-	// int max_iter = 1000;
-	// int count_brute = 0;
-	// srand((unsigned)time(0)); // make it change everytime we run the code
-	// for (int i = 0; i < max_iter; i++)
-	// {
-	// 	// PASS A RANGE AND GET THE POINTS IN THAT RANGE
-	// 	// int x_rand = 100 + rand() % 201; // (200 -100 + 1)
-	// 	// int y_rand = 100 + rand() % 201; // (200 -100 + 1)
-	// 	// int z_rand = 100 + rand() % 201; // (200 -100 + 1)
-	// 	// Cuboid range(x_rand, y_rand, z_rand, 20, 20, 20);
-	// 	// Sphere range(x_rand, y_rand, z_rand, 50);
-	// 	// Cuboid range(200,200, 200, 20,20,20);
-	// 	Sphere range(200, 200, 200, 20);
-	// 	vector<Point> pointz;
+	// cout << ot.get_boundary();
+	std::chrono::duration<int64_t, std::nano> duration_q = std::chrono::duration<int64_t, std::nano>();
+	std::chrono::duration<int64_t, std::nano> duration_all = std::chrono::duration<int64_t, std::nano>();
+	int max_iter = 1000;
+	int count_brute = 0;
+	srand((unsigned)time(0)); // make it change everytime we run the code
+	for (int i = 0; i < max_iter; i++)
+	{
+		// PASS A RANGE AND GET THE POINTS IN THAT RANGE
+		// int x_rand = 100 + rand() % 201; // (200 -100 + 1)
+		// int y_rand = 100 + rand() % 201; // (200 -100 + 1)
+		// int z_rand = 100 + rand() % 201; // (200 -100 + 1)
+		// Cuboid range(x_rand, y_rand, z_rand, 20, 20, 20);
+		// Sphere range(x_rand, y_rand, z_rand, 50);
+		// Cuboid range(200,200, 200, 20,20,20);
+		Sphere range(0, 0, 0, 20);
+		vector<Point> pointz;
 
-	// 	// OCTree approach
-	// 	auto start_q = chrono::high_resolution_clock::now();
-	// 	pointz = ot.query(range, pointz);
-	// 	auto stop_q = high_resolution_clock::now();
-	// 	duration_q += (stop_q - start_q);
+		// OCTree approach
+		auto start_q = chrono::high_resolution_clock::now();
+		pointz = ot.query(range, pointz);
+		auto stop_q = high_resolution_clock::now();
+		duration_q += (stop_q - start_q);
 
-	// 	// Brute Force
-	// 	vector<Point> pointz_test;
-	// 	auto start_all = chrono::high_resolution_clock::now();
-	// 	for (auto point : points)
-	// 	{
-	// 		count_brute++;
-	// 		if (range.contains(point))
-	// 		{
-	// 			pointz_test.push_back(point);
-	// 		}
-	// 	}
-	// 	auto stop_all = chrono::high_resolution_clock::now();
-	// 	duration_all += (stop_all - start_all);
+		// Brute Force
+		vector<Point> pointz_test;
+		auto start_all = chrono::high_resolution_clock::now();
+		for (auto point : points)
+		{
+			count_brute++;
+			if (range.contains(point))
+			{
+				pointz_test.push_back(point);
+			}
+		}
+		auto stop_all = chrono::high_resolution_clock::now();
+		duration_all += (stop_all - start_all);
 
-	// 	// cout << (pointz.size() == pointz_test.size());
-	// 	cout << (pointz == pointz_test);
-	// }
-	// cout << "QTREE: " << duration_cast<microseconds>(duration_q).count() / max_iter << std::endl;
-	// cout << "QTREE: Number of points checked to find the points within the range: " << count << std::endl;
-	// cout << "BRUTE: " << duration_cast<microseconds>(duration_all).count() / max_iter << std::endl;
-	// cout << "BRUTE: Number of points checked to find the points within the range: " << count_brute << std::endl;
+		// cout << (pointz.size() == pointz_test.size());
+		cout << (pointz == pointz_test);
+	}
+	cout << "Time for OCTree: " << duration_cast<microseconds>(duration_q).count() / max_iter << std::endl;
+	cout << "OCTree: Number of points checked to find the points within the range: " << count << std::endl;
+	cout << "Time for BRUTE: " << duration_cast<microseconds>(duration_all).count() / max_iter << std::endl;
+	cout << "BRUTE: Number of points checked to find the points within the range: " << count_brute << std::endl;
 
 	// // PASS A RANGE AND GET THE POINTS IN THAT RANGE
 	// srand((unsigned)time(NULL));	 // make it change everytime we run the code
