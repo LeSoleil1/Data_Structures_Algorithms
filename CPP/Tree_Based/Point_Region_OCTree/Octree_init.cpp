@@ -513,381 +513,413 @@ public:
 	// TODO K nearest neighbor
 };
 
-constexpr int MIN = 1;
-constexpr int WIDTH = 200;
-constexpr int HEIGHT = 200;
-constexpr int DEPTH = 200;
-constexpr int CAPACITY = 400;
-constexpr int center_x = 0;
-constexpr int center_y = 0;
-constexpr int center_z = 0;
+// constexpr int MIN = 1;
+// constexpr int WIDTH = 200;
+// constexpr int HEIGHT = 200;
+// constexpr int DEPTH = 200;
+// constexpr int CAPACITY = 400;
+// constexpr int center_x = 0;
+// constexpr int center_y = 0;
+// constexpr int center_z = 0;
 
 std::vector<Cuboid> OCTree::boundaries = std::vector<Cuboid>();
 
-double rnd(double lo, double hi)
-{
-	return lo + (hi - lo) * (rand() / static_cast<double>(RAND_MAX));
-}
+// double rnd(double lo, double hi)
+// {
+// 	return lo + (hi - lo) * (rand() / static_cast<double>(RAND_MAX));
+// }
 
-double angle = 0.0;
-void timer(int value)
-{
-	angle += 1.0;
-	glutTimerFunc(16, timer, 0);
-	glutPostRedisplay();
-}
+// double angle = 0.0;
+// void timer(int value)
+// {
+// 	angle += 1.0;
+// 	glutTimerFunc(16, timer, 0);
+// 	glutPostRedisplay();
+// }
 
-int main(int argc, char **argv)
-{
-	auto mean_x = center_x;
-	auto mean_y = center_y;
-	auto mean_z = center_z;
-	auto stddev_x = WIDTH / 4;
-	auto stddev_y = HEIGHT / 4;
-	auto stddev_z = DEPTH / 4;
+// int main(int argc, char **argv)
+// {
+// 	auto mean_x = center_x;
+// 	auto mean_y = center_y;
+// 	auto mean_z = center_z;
+// 	auto stddev_x = WIDTH / 4;
+// 	auto stddev_y = HEIGHT / 4;
+// 	auto stddev_z = DEPTH / 4;
 
-	std::random_device rd;
-	std::mt19937 e2(rd());
-	std::normal_distribution<> dist_width(mean_x, stddev_x);
-	std::normal_distribution<> dist_height(mean_y, stddev_y);
-	std::normal_distribution<> dist_depth(mean_z, stddev_z);
+// 	std::random_device rd;
+// 	std::mt19937 e2(rd());
+// 	std::normal_distribution<> dist_width(mean_x, stddev_x);
+// 	std::normal_distribution<> dist_height(mean_y, stddev_y);
+// 	std::normal_distribution<> dist_depth(mean_z, stddev_z);
 
-	Cuboid boundary(center_x, center_y, center_z, WIDTH, WIDTH, DEPTH);
-	OCTree ot(boundary, CAPACITY);
-	vector<Point> inserted_points = vector<Point>();
-	int counter = 0;
-	int x_int;
-	int y_int;
-	int z_int;
+// 	Cuboid boundary(center_x, center_y, center_z, WIDTH, WIDTH, DEPTH);
+// 	OCTree ot(boundary, CAPACITY);
+// 	vector<Point> inserted_points = vector<Point>();
+// 	int counter = 0;
+// 	int x_int;
+// 	int y_int;
+// 	int z_int;
 
-	auto start = chrono::high_resolution_clock::now();
-	for (int i = 0; i < 1000; i++)
-	{
-		x_int = round(dist_width(e2));
-		y_int = round(dist_height(e2));
-		z_int = round(dist_depth(e2));
-		Point p(x_int, y_int, z_int);
-		// cout << p;
-		bool res = ot.insert(p);
-		if (res == 1)
-		{
-			counter++;
-			inserted_points.push_back(p);
-		}
-		// cout << "inserted\t" << res << std::endl;
-		// cout << boundary.contains(p) << std::endl;
-	}
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop - start);
+// 	auto start = chrono::high_resolution_clock::now();
+// 	for (int i = 0; i < 10000; i++)
+// 	{
+// 		x_int = round(dist_width(e2));
+// 		y_int = round(dist_height(e2));
+// 		z_int = round(dist_depth(e2));
+// 		Point p(x_int, y_int, z_int);
+// 		// cout << p;
+// 		bool res = ot.insert(p);
+// 		if (res == 1)
+// 		{
+// 			counter++;
+// 			inserted_points.push_back(p);
+// 		}
+// 		// cout << "inserted\t" << res << std::endl;
+// 		// cout << boundary.contains(p) << std::endl;
+// 	}
+// 	auto stop = high_resolution_clock::now();
+// 	auto duration = duration_cast<microseconds>(stop - start);
 
-	// To get the value of duration use the count()
-	// member function on the duration object
-	cout << "Generating the tree takes " << duration.count() << " microseconds" << std::endl;
-	// cout << count;
-	// for (auto point:inserted_points){
-	// 	if(boundary.contains(point)){
-	// 		cout << point;
-	// 	}
-	// }
+// 	// To get the value of duration use the count()
+// 	// member function on the duration object
+// 	cout << "Generating the tree takes " << duration.count() << " microseconds" << std::endl;
+// 	// cout << count;
+// 	// for (auto point:inserted_points){
+// 	// 	if(boundary.contains(point)){
+// 	// 		cout << point;
+// 	// 	}
+// 	// }
 
-	// ot.print_Boundaries();
+// 	// ot.print_Boundaries();
 
-	vector<Cuboid> boundaries = ot.get_boundaries();
-	Cuboid test_range(center_x, center_y, center_z, WIDTH, HEIGHT, DEPTH);
-	// cout << test_range << std::endl;
-	vector<Point> points;
-	points = ot.query(test_range, points);
-	cout << " Number of points inserted: " << points.size() << std::endl;
+// 	vector<Cuboid> boundaries = ot.get_boundaries();
+// 	Cuboid test_range(center_x, center_y, center_z, WIDTH, HEIGHT, DEPTH);
+// 	// cout << test_range << std::endl;
+// 	vector<Point> points;
+// 	points = ot.query(test_range, points);
+// 	cout << " Number of points inserted: " << points.size() << std::endl;
 
-	// cout << ot.get_boundary();
-	std::chrono::duration<int64_t, std::nano> duration_q = std::chrono::duration<int64_t, std::nano>();
-	std::chrono::duration<int64_t, std::nano> duration_all = std::chrono::duration<int64_t, std::nano>();
-	int max_iter = 1000;
-	int count_brute = 0;
-	srand((unsigned)time(0)); // make it change everytime we run the code
-	for (int i = 0; i < max_iter; i++)
-	{
-		// PASS A RANGE AND GET THE POINTS IN THAT RANGE
-		// int x_rand = 100 + rand() % 201; // (200 -100 + 1)
-		// int y_rand = 100 + rand() % 201; // (200 -100 + 1)
-		// int z_rand = 100 + rand() % 201; // (200 -100 + 1)
-		// Cuboid range(x_rand, y_rand, z_rand, 20, 20, 20);
-		// Sphere range(x_rand, y_rand, z_rand, 50);
-		// Cuboid range(200,200, 200, 20,20,20);
-		Sphere range(0, 0, 0, 20);
-		vector<Point> pointz;
+// 	// cout << ot.get_boundary();
+// 	std::chrono::duration<int64_t, std::nano> duration_q = std::chrono::duration<int64_t, std::nano>();
+// 	std::chrono::duration<int64_t, std::nano> duration_all = std::chrono::duration<int64_t, std::nano>();
+// 	int max_iter = 1000;
+// 	int count_brute = 0;
+// 	srand((unsigned)time(0)); // make it change everytime we run the code
+// 	for (int i = 0; i < max_iter; i++)
+// 	{
+// 		// PASS A RANGE AND GET THE POINTS IN THAT RANGE
+// 		// int x_rand = 100 + rand() % 201; // (200 -100 + 1)
+// 		// int y_rand = 100 + rand() % 201; // (200 -100 + 1)
+// 		// int z_rand = 100 + rand() % 201; // (200 -100 + 1)
+// 		// Cuboid range(x_rand, y_rand, z_rand, 20, 20, 20);
+// 		// Sphere range(x_rand, y_rand, z_rand, 50);
+// 		// Cuboid range(200,200, 200, 20,20,20);
+// 		Sphere range(0, 0, 0, 20);
+// 		vector<Point> pointz;
 
-		// OCTree approach
-		auto start_q = chrono::high_resolution_clock::now();
-		pointz = ot.query(range, pointz);
-		auto stop_q = high_resolution_clock::now();
-		duration_q += (stop_q - start_q);
+// 		// OCTree approach
+// 		auto start_q = chrono::high_resolution_clock::now();
+// 		pointz = ot.query(range, pointz);
+// 		auto stop_q = high_resolution_clock::now();
+// 		duration_q += (stop_q - start_q);
 
-		// Brute Force
-		vector<Point> pointz_test;
-		auto start_all = chrono::high_resolution_clock::now();
-		for (auto point : points)
-		{
-			count_brute++;
-			if (range.contains(point))
-			{
-				pointz_test.push_back(point);
-			}
-		}
-		auto stop_all = chrono::high_resolution_clock::now();
-		duration_all += (stop_all - start_all);
+// 		// Brute Force
+// 		vector<Point> pointz_test;
+// 		auto start_all = chrono::high_resolution_clock::now();
+// 		for (auto point : points)
+// 		{
+// 			count_brute++;
+// 			if (range.contains(point))
+// 			{
+// 				pointz_test.push_back(point);
+// 			}
+// 		}
+// 		auto stop_all = chrono::high_resolution_clock::now();
+// 		duration_all += (stop_all - start_all);
 
-		// cout << (pointz.size() == pointz_test.size());
-		cout << (pointz == pointz_test);
-	}
-	cout << "Time for OCTree: " << duration_cast<microseconds>(duration_q).count() / max_iter << std::endl;
-	cout << "OCTree: Number of points checked to find the points within the range: " << count << std::endl;
-	cout << "Time for BRUTE: " << duration_cast<microseconds>(duration_all).count() / max_iter << std::endl;
-	cout << "BRUTE: Number of points checked to find the points within the range: " << count_brute << std::endl;
+// 		// cout << (pointz.size() == pointz_test.size());
+// 		cout << (pointz == pointz_test);
+// 	}
+// 	cout << "Time for OCTree: " << duration_cast<microseconds>(duration_q).count() / max_iter << std::endl;
+// 	cout << "OCTree: Number of points checked to find the points within the range: " << count << std::endl;
+// 	cout << "Time for BRUTE: " << duration_cast<microseconds>(duration_all).count() / max_iter << std::endl;
+// 	cout << "BRUTE: Number of points checked to find the points within the range: " << count_brute << std::endl;
 
-	// PASS A RANGE AND GET THE POINTS IN THAT RANGE
-	srand((unsigned)time(NULL)); // make it change everytime we run the code
-	int x_rand = rnd(-5.0, 5.0);
-	int y_rand = rnd(-5.0, 5.0);
-	int z_rand = rnd(-5.0, 5.0);
-	Cuboid range(x_rand, y_rand, z_rand, 200, 200, 200);
-	vector<Point> pointz;
-	pointz = ot.query(range, pointz);
-	cout << pointz.size() << " Number of points are in the: "
-		 << "range: " << range << std::endl;
-	cout << "Number of points checked to find the points within the range: " << count << std::endl;
+// 	// PASS A RANGE AND GET THE POINTS IN THAT RANGE
+// 	srand((unsigned)time(NULL)); // make it change everytime we run the code
+// 	int x_rand = rnd(-5.0, 5.0);
+// 	int y_rand = rnd(-5.0, 5.0);
+// 	int z_rand = rnd(-5.0, 5.0);
+// 	// Cuboid range(x_rand, y_rand, z_rand, 200, 200, 200);
+// 	Sphere range(100, 20, 20, 50);
+// 	vector<Point> pointz;
+// 	pointz = ot.query(range, pointz);
+// 	cout << pointz.size() << " Number of points are in the: "
+// 		 << "range: " << range << std::endl;
+// 	cout << "Number of points checked to find the points within the range: " << count << std::endl;
 
-	// // PRINT ALL THE BOUNDARIES
-	// cout << '\n'
-	// 	 << "BOUNDARIES:" << '\n';
-	// for (auto boundary : boundaries)
-	// {
-	// 	cout << boundary << std::endl;
-	// }
+// 	// // PRINT ALL THE BOUNDARIES
+// 	// cout << '\n'
+// 	// 	 << "BOUNDARIES:" << '\n';
+// 	// for (auto boundary : boundaries)
+// 	// {
+// 	// 	cout << boundary << std::endl;
+// 	// }
 
-	// // PRINT ALL THE POINTS
-	// cout << '\n'
-	// 	 << "POINTS:" << '\n';
-	// for (auto point : points)
-	// {
-	// 	cout << point << ' ';
-	// }
+// 	// // PRINT ALL THE POINTS
+// 	// cout << '\n'
+// 	// 	 << "POINTS:" << '\n';
+// 	// for (auto point : points)
+// 	// {
+// 	// 	cout << point << ' ';
+// 	// }
 
-	// Drawing ///////////////
-	// -lGL -lGLU -lglut
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(900, 900);
-	glutCreateWindow("Test");
-	// glClearColor(1.0, 1.0, 1.0, 1.0); // Background color
-	glClearColor(0, 0, 0, 0);
-	float x;
-	float y;
-	float z;
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	double w = glutGet(GLUT_WINDOW_WIDTH);
-	double h = glutGet(GLUT_WINDOW_HEIGHT);
-	gluPerspective(60.0, w / h, 0.1, 1000.0);
+// 	// Drawing ///////////////
+// 	// -lGL -lGLU -lglut
+// 	glutInit(&argc, argv);
+// 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+// 	glutInitWindowSize(900, 900);
+// 	glutCreateWindow("Test");
+// 	// glClearColor(1.0, 1.0, 1.0, 1.0); // Background color
+// 	glClearColor(0, 0, 0, 0);
+// 	float x;
+// 	float y;
+// 	float z;
+// 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+// 	glMatrixMode(GL_PROJECTION);
+// 	glLoadIdentity();
+// 	double w = glutGet(GLUT_WINDOW_WIDTH);
+// 	double h = glutGet(GLUT_WINDOW_HEIGHT);
+// 	gluPerspective(60.0, w / h, 0.1, 1000.0);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(200, 200, 200, 0, 0, 0, 0, 0, 1);
+// 	glMatrixMode(GL_MODELVIEW);
+// 	glLoadIdentity();
+// 	gluLookAt(200, 200, 200, 0, 0, 0, 0, 0, 1);
 
-	glRotated(angle, 0, 0, 1);
+// 	glRotated(angle, 0, 0, 1);
 
-	// counter = 0;
+// 	// counter = 0;
 
-	// Plotting Boundaries
-	// int x_int;;
-	// int y_int;
-	// int w_int;
-	// int h_int;
-	// int d_int;
-	// for (auto boundary : boundaries)
-	// {
-	// 	x_int = boundary.get_x();
-	// 	y_int = boundary.get_y();
-	// 	z_int = boundary.get_z();
-	// 	w_int = boundary.get_w();
-	// 	h_int = boundary.get_h();
-	// 	d_int = boundary.get_d();
-	// 	float x_start = x_int - w_int / 2.0;
-	// 	float x_stop = x_int + w_int / 2.0;
-	// 	float y_start = y_int - h_int / 2.0;
-	// 	float y_stop = y_int + h_int / 2.0;
-	// 	float z_start = z_int - d_int / 2.0;
-	// 	float z_stop = z_int + d_int / 2.0;
-	// 	x_start = (x_start - center_x) / (WIDTH / 2.0);
-	// 	x_stop = (x_stop - center_x) / (WIDTH / 2.0);
-	// 	x = (x_int - center_x) / (WIDTH / 2.0);
-	// 	y_start = (y_start - center_y) / (HEIGHT / 2.0);
-	// 	y_stop = (y_stop - center_y) / (HEIGHT / 2.0);
-	// 	y = (y_int - center_y) / (HEIGHT / 2.0);
+// 	// Plotting Boundaries
+// 	// int x_int;;
+// 	// int y_int;
+// 	// int w_int;
+// 	// int h_int;
+// 	// int d_int;
+// 	// for (auto boundary : boundaries)
+// 	// {
+// 	// 	x_int = boundary.get_x();
+// 	// 	y_int = boundary.get_y();
+// 	// 	z_int = boundary.get_z();
+// 	// 	w_int = boundary.get_w();
+// 	// 	h_int = boundary.get_h();
+// 	// 	d_int = boundary.get_d();
+// 	// 	float x_start = x_int - w_int / 2.0;
+// 	// 	float x_stop = x_int + w_int / 2.0;
+// 	// 	float y_start = y_int - h_int / 2.0;
+// 	// 	float y_stop = y_int + h_int / 2.0;
+// 	// 	float z_start = z_int - d_int / 2.0;
+// 	// 	float z_stop = z_int + d_int / 2.0;
+// 	// 	x_start = (x_start - center_x) / (WIDTH / 2.0);
+// 	// 	x_stop = (x_stop - center_x) / (WIDTH / 2.0);
+// 	// 	x = (x_int - center_x) / (WIDTH / 2.0);
+// 	// 	y_start = (y_start - center_y) / (HEIGHT / 2.0);
+// 	// 	y_stop = (y_stop - center_y) / (HEIGHT / 2.0);
+// 	// 	y = (y_int - center_y) / (HEIGHT / 2.0);
 
-	// 	z_start = (z_start - center_z) / (DEPTH / 2.0);
-	// 	z_stop = (z_stop - center_z) / (DEPTH / 2.0);
-	// 	z = (z_int - center_z) / (DEPTH / 2.0);
-	// 	// cout << x_start << '\t' << x_stop << '\t' << y << std::endl;
-	// 	// cout << y_start << '\t' << y_stop << '\t' << x << std::endl;
+// 	// 	z_start = (z_start - center_z) / (DEPTH / 2.0);
+// 	// 	z_stop = (z_stop - center_z) / (DEPTH / 2.0);
+// 	// 	z = (z_int - center_z) / (DEPTH / 2.0);
+// 	// 	// cout << x_start << '\t' << x_stop << '\t' << y << std::endl;
+// 	// 	// cout << y_start << '\t' << y_stop << '\t' << x << std::endl;
 
-	// 	// Line x axis
-	// 	glColor3ub(254, 0, 0);
-	// 	glBegin(GL_LINES);
-	// 	glVertex3f(x_start, y, z);
-	// 	glVertex3f(x_stop, y, z);
-	// 	glEnd();
+// 	// 	// Line x axis
+// 	// 	glColor3ub(254, 0, 0);
+// 	// 	glBegin(GL_LINES);
+// 	// 	glVertex3f(x_start, y, z);
+// 	// 	glVertex3f(x_stop, y, z);
+// 	// 	glEnd();
 
-	// 	// Line y axis
-	// 	glColor3ub(31, 255, 0);
-	// 	glBegin(GL_LINES);
-	// 	glVertex3f(x, y_start, z);
-	// 	glVertex3f(x, y_stop, z);
-	// 	glEnd();
+// 	// 	// Line y axis
+// 	// 	glColor3ub(31, 255, 0);
+// 	// 	glBegin(GL_LINES);
+// 	// 	glVertex3f(x, y_start, z);
+// 	// 	glVertex3f(x, y_stop, z);
+// 	// 	glEnd();
 
-	// 	// Line z axis
-	// 	glColor3ub(31, 255, 0);
-	// 	glBegin(GL_LINES);
-	// 	glVertex3f(x, y, z_start);
-	// 	glVertex3f(x, y, z_stop);
-	// 	glEnd();
+// 	// 	// Line z axis
+// 	// 	glColor3ub(31, 255, 0);
+// 	// 	glBegin(GL_LINES);
+// 	// 	glVertex3f(x, y, z_start);
+// 	// 	glVertex3f(x, y, z_stop);
+// 	// 	glEnd();
 
-	// 	glFlush();
-	// }
+// 	// 	glFlush();
+// 	// }
 
-	// // Plotting points
-	// for (auto point : points)
-	// {
-	// 	x_int = point.get_x();
-	// 	y_int = point.get_y();
-	// 	x = (x_int - center_x) / (WIDTH / 2.0);
-	// 	y = (y_int - center_y) / (HEIGHT / 2.0);
-	// 	glPointSize(3);
-	// 	glBegin(GL_POINTS);
-	// 	glColor3f(0.5, 0, 0);
-	// 	glVertex2f(x, y);
-	// 	glEnd();
-	// 	glFlush();
-	// }
+// 	// // Plotting points
+// 	// for (auto point : points)
+// 	// {
+// 	// 	x_int = point.get_x();
+// 	// 	y_int = point.get_y();
+// 	// 	x = (x_int - center_x) / (WIDTH / 2.0);
+// 	// 	y = (y_int - center_y) / (HEIGHT / 2.0);
+// 	// 	glPointSize(3);
+// 	// 	glBegin(GL_POINTS);
+// 	// 	glColor3f(0.5, 0, 0);
+// 	// 	glVertex2f(x, y);
+// 	// 	glEnd();
+// 	// 	glFlush();
+// 	// }
 
-	// // PLOTTING THE SPECIFIC POINTS IN THE SPECIFIED REGION
-	// // FIRST PLOT THE REGION
-	// // Cuboid
-	// x_int = range.get_x();
-	// y_int = range.get_y();
-	// w_int = range.get_w();
-	// h_int = range.get_h();
-	// float x_start = x_int - w_int / 2.0;
-	// float x_stop = x_int + w_int / 2.0;
-	// float y_start = y_int - h_int / 2.0;
-	// float y_stop = y_int + h_int / 2.0;
-	// x_start = (x_start - center_x) / (WIDTH / 2.0);
-	// x_stop = (x_stop - center_x) / (WIDTH / 2.0);
-	// y_start = (y_start - center_y) / (HEIGHT / 2.0);
-	// y_stop = (y_stop - center_y) / (HEIGHT / 2.0);
-	// cout << x_start << '\t' << x_stop << std::endl;
-	// cout << y_start << '\t' << y_stop << std::endl;
-	// // if (x_start < -1) {	x_start = -.99;}
-	// // if (x_start > 1) {	x_start = .99;}
-	// // if (x_stop < -1) {	x_stop = -.99;}
-	// // if (x_stop > 1) {	x_stop = .99;}
-	// // if (y_start < -1) {	y_start = -.99;}
-	// // if (y_start > 1) {	y_start = .99;}
-	// // if (y_stop < -1) {	y_stop = -.99;}
-	// // if (y_stop > 1) {	y_stop = .99;}
+// 	// // PLOTTING THE SPECIFIC POINTS IN THE SPECIFIED REGION
+// 	// // FIRST PLOT THE REGION
+// 	// // Cuboid
+// 	// x_int = range.get_x();
+// 	// y_int = range.get_y();
+// 	// w_int = range.get_w();
+// 	// h_int = range.get_h();
+// 	// float x_start = x_int - w_int / 2.0;
+// 	// float x_stop = x_int + w_int / 2.0;
+// 	// float y_start = y_int - h_int / 2.0;
+// 	// float y_stop = y_int + h_int / 2.0;
+// 	// x_start = (x_start - center_x) / (WIDTH / 2.0);
+// 	// x_stop = (x_stop - center_x) / (WIDTH / 2.0);
+// 	// y_start = (y_start - center_y) / (HEIGHT / 2.0);
+// 	// y_stop = (y_stop - center_y) / (HEIGHT / 2.0);
+// 	// cout << x_start << '\t' << x_stop << std::endl;
+// 	// cout << y_start << '\t' << y_stop << std::endl;
+// 	// // if (x_start < -1) {	x_start = -.99;}
+// 	// // if (x_start > 1) {	x_start = .99;}
+// 	// // if (x_stop < -1) {	x_stop = -.99;}
+// 	// // if (x_stop > 1) {	x_stop = .99;}
+// 	// // if (y_start < -1) {	y_start = -.99;}
+// 	// // if (y_start > 1) {	y_start = .99;}
+// 	// // if (y_stop < -1) {	y_stop = -.99;}
+// 	// // if (y_stop > 1) {	y_stop = .99;}
 
-	// cout << x_start << '\t' << x_stop << std::endl;
-	// cout << y_start << '\t' << y_stop << std::endl;
-	// glLineWidth(5);
-	// glBegin(GL_LINE_LOOP);{
-	// 	glColor3ub(0, 0, 250);
-	// 	glColor4f(1.0, 0.0, 0.0, 0.5);
-	// 	glVertex2f(x_start,y_stop);
-	// 	glVertex2f(x_stop, y_stop);
-	// 	glVertex2f(x_stop, y_start);
-	// 	glVertex2f(x_start, y_start);
-	// }
-	// glEnd();
-	// // POINTS
-	// srand(0);
-	// glBegin(GL_LINES);
-	// for (size_t i = 0; i<100;i++){
-	// 	glColor3d(rnd(0.0,1.0),rnd(0.0,1.0),rnd(0.0,1.0));
-	// 	glVertex3d(rnd(-50,50),rnd(-50,50),rnd(-50,50));
-	// 	glVertex3d(rnd(-50,50),rnd(-50,50),rnd(-50,50));
-	// }
-	// glEnd();
-	// glutSwapBuffers();
-	// srand(0);
-	// glPointSize(5);
-	// glBegin(GL_POINTS);
-	// for (size_t i = 0; i<100;i++){
-	// 	glColor3d(rnd(0.0,1.0),rnd(0.0,1.0),rnd(0.0,1.0));
-	// 	glVertex3d(rnd(-50,50),rnd(-50,50),rnd(-50,50));
-	//     // glVertex3f(rnd(-1.0,1.0),rnd(-1.0,1.0),rnd(-1.0,1.0));
-	// }
-	// glEnd();
-	// glutSwapBuffers();
+// 	// cout << x_start << '\t' << x_stop << std::endl;
+// 	// cout << y_start << '\t' << y_stop << std::endl;
+// 	// glLineWidth(5);
+// 	// glBegin(GL_LINE_LOOP);{
+// 	// 	glColor3ub(0, 0, 250);
+// 	// 	glColor4f(1.0, 0.0, 0.0, 0.5);
+// 	// 	glVertex2f(x_start,y_stop);
+// 	// 	glVertex2f(x_stop, y_stop);
+// 	// 	glVertex2f(x_stop, y_start);
+// 	// 	glVertex2f(x_start, y_start);
+// 	// }
+// 	// glEnd();
+// 	// // POINTS
+// 	// srand(0);
+// 	// glBegin(GL_LINES);
+// 	// for (size_t i = 0; i<100;i++){
+// 	// 	glColor3d(rnd(0.0,1.0),rnd(0.0,1.0),rnd(0.0,1.0));
+// 	// 	glVertex3d(rnd(-50,50),rnd(-50,50),rnd(-50,50));
+// 	// 	glVertex3d(rnd(-50,50),rnd(-50,50),rnd(-50,50));
+// 	// }
+// 	// glEnd();
+// 	// glutSwapBuffers();
+// 	// srand(0);
+// 	// glPointSize(5);
+// 	// glBegin(GL_POINTS);
+// 	// for (size_t i = 0; i<100;i++){
+// 	// 	glColor3d(rnd(0.0,1.0),rnd(0.0,1.0),rnd(0.0,1.0));
+// 	// 	glVertex3d(rnd(-50,50),rnd(-50,50),rnd(-50,50));
+// 	//     // glVertex3f(rnd(-1.0,1.0),rnd(-1.0,1.0),rnd(-1.0,1.0));
+// 	// }
+// 	// glEnd();
+// 	// glutSwapBuffers();
 
-	// Line x axis
-	glColor3ub(254, 0, 0);
-	glBegin(GL_LINES);
-	// glVertex3f(0.0f, 0.0f, 0.0f);
-	// glVertex3f(1.0f, 0.0f, 0.0f);
-	glVertex3d(0,0,0);
-	glVertex3d(150,0,0);
-	glEnd();
+// 	// Line x axis
+// 	glColor3ub(254, 0, 0);
+// 	glBegin(GL_LINES);
+// 	// glVertex3f(0.0f, 0.0f, 0.0f);
+// 	// glVertex3f(1.0f, 0.0f, 0.0f);
+// 	glVertex3d(0,0,0);
+// 	glVertex3d(150,0,0);
+// 	glEnd();
 
-	// Line y axis
-	glColor3ub(0, 255, 0);
-	glBegin(GL_LINES);
-	// glVertex3f(0.0f, 0.0f, 0.0f);
-	// glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3d(0,0,0);
-	glVertex3d(0,150,0);
-	glEnd();
+// 	// Line y axis
+// 	glColor3ub(0, 255, 0);
+// 	glBegin(GL_LINES);
+// 	// glVertex3f(0.0f, 0.0f, 0.0f);
+// 	// glVertex3f(0.0f, 1.0f, 0.0f);
+// 	glVertex3d(0,0,0);
+// 	glVertex3d(0,150,0);
+// 	glEnd();
 
-	// Line z axis
-	glColor3ub(0, 0, 255);
-	glBegin(GL_LINES);
-	// glVertex3f(0.0f, 0.0f, 0.0f);
-	// glVertex3f(0.0f, 0.0f, 1.0f);
-	glVertex3d(0,0,0);
-	glVertex3d(0,0,150);
-	glEnd();
+// 	// Line z axis
+// 	glColor3ub(0, 0, 255);
+// 	glBegin(GL_LINES);
+// 	// glVertex3f(0.0f, 0.0f, 0.0f);
+// 	// glVertex3f(0.0f, 0.0f, 1.0f);
+// 	glVertex3d(0,0,0);
+// 	glVertex3d(0,0,150);
+// 	glEnd();
 
 
-	glPointSize(3);
-	glBegin(GL_POINTS);
-	for (auto point : pointz)
-	{
-		x_int = point.get_x();
-		y_int = point.get_y();
-		z_int = point.get_z();
+// 	// All points in the space
+// 	glPointSize(3);
+// 	glBegin(GL_POINTS);
+// 	for (auto point : points)
+// 	{
+// 		x_int = point.get_x();
+// 		y_int = point.get_y();
+// 		z_int = point.get_z();
 
-		// x = (x_int - center_x) / (WIDTH / 2.0);
-		// y = (y_int - center_y) / (HEIGHT / 2.0);
-		// z = (z_int - center_z) / (DEPTH / 2.0);
+// 		// x = (x_int - center_x) / (WIDTH / 2.0);
+// 		// y = (y_int - center_y) / (HEIGHT / 2.0);
+// 		// z = (z_int - center_z) / (DEPTH / 2.0);
 
-		// glColor3f(rnd(-1.0,1.0), rnd(-1.0,1.0), rnd(-1.0,1.0));
-		// glVertex3f(x, y, z);
+// 		// glColor3f(rnd(-1.0,1.0), rnd(-1.0,1.0), rnd(-1.0,1.0));
+// 		// glVertex3f(x, y, z);
 
-		x = (x_int - center_x);
-		y = (y_int - center_y);
-		z = (z_int - center_z);
-		glColor3f(rnd(-1.0,1.0), rnd(-1.0,1.0), rnd(-1.0,1.0));
-		glVertex3d(x, y, z);
-	}
-	glEnd();
-	glutSwapBuffers();
+// 		x = (x_int - center_x);
+// 		y = (y_int - center_y);
+// 		z = (z_int - center_z);
+// 		// glColor3f(rnd(-1.0,1.0), rnd(-1.0,1.0), rnd(-1.0,1.0));
+// 		glColor3f(0,1,0);
 
-	// // glFlush();
+// 		glVertex3d(x, y, z);
+// 	}
+// 	glEnd();
+// 	glutSwapBuffers();
 
-	// // cout << counter;
-	// // glutDisplayFunc(display1);
-	glutTimerFunc(0, timer, 0);
-	glutMainLoop();
-	// //////////////////////////////////////
-	return 0;
-}
+
+// 	// Only points that returned by the algorithms within the range
+// 	glPointSize(3);
+// 	glBegin(GL_POINTS);
+// 	for (auto point : pointz)
+// 	{
+// 		x_int = point.get_x();
+// 		y_int = point.get_y();
+// 		z_int = point.get_z();
+
+// 		// x = (x_int - center_x) / (WIDTH / 2.0);
+// 		// y = (y_int - center_y) / (HEIGHT / 2.0);
+// 		// z = (z_int - center_z) / (DEPTH / 2.0);
+
+// 		// glColor3f(rnd(-1.0,1.0), rnd(-1.0,1.0), rnd(-1.0,1.0));
+// 		// glVertex3f(x, y, z);
+
+// 		x = (x_int - center_x);
+// 		y = (y_int - center_y);
+// 		z = (z_int - center_z);
+// 		// glColor3f(rnd(-1.0,1.0), rnd(-1.0,1.0), rnd(-1.0,1.0));
+// 		glColor3f(1,0,0);
+
+// 		glVertex3d(x, y, z);
+// 	}
+// 	glEnd();
+// 	glutSwapBuffers();
+
+// 	// // glFlush();
+
+// 	// // cout << counter;
+// 	// // glutDisplayFunc(display1);
+// 	glutTimerFunc(0, timer, 0);
+// 	glutMainLoop();
+// 	// //////////////////////////////////////
+// 	return 0;
+// }
