@@ -830,6 +830,34 @@ int main(int argc, char **argv)
 	// glEnd();
 	// glutSwapBuffers();
 
+	// Line x axis
+	glColor3ub(254, 0, 0);
+	glBegin(GL_LINES);
+	// glVertex3f(0.0f, 0.0f, 0.0f);
+	// glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3d(0,0,0);
+	glVertex3d(150,0,0);
+	glEnd();
+
+	// Line y axis
+	glColor3ub(0, 255, 0);
+	glBegin(GL_LINES);
+	// glVertex3f(0.0f, 0.0f, 0.0f);
+	// glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3d(0,0,0);
+	glVertex3d(0,150,0);
+	glEnd();
+
+	// Line z axis
+	glColor3ub(0, 0, 255);
+	glBegin(GL_LINES);
+	// glVertex3f(0.0f, 0.0f, 0.0f);
+	// glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3d(0,0,0);
+	glVertex3d(0,0,150);
+	glEnd();
+
+
 	glPointSize(3);
 	glBegin(GL_POINTS);
 	for (auto point : pointz)
